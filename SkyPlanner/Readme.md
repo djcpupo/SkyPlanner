@@ -40,3 +40,36 @@ Swagger
     - Every service in that tab will have a small description, the same description is in the source code
     - If click one of those services the you can Try it with the "Try it out" button and you will see the service response y the response box
     - By default the response box have a sample response but not a real one
+
+Postman
+    Account:
+        - List (Get): https://localhost:44342/api/Account
+        - Get by Id (Get): https://localhost:44342/api/Account/1
+        - Get Account Orders (Get): https://localhost:44342/api/Account/1/Orders
+    Product:
+        - List (Get): https://localhost:44342/api/Product
+        - Get by Id (Get): https://localhost:44342/api/Product/1
+        - Search by name (Get): https://localhost:44342/api/Product/laptop/Search
+    Order:
+        - List (Get): https://localhost:44342/api/Order
+        - Get by Id (Get): https://localhost:44342/api/Order/1
+        - Create Order (Post): https://localhost:44342/api/Order
+            Sample request
+            {        
+              "orderId": 0,
+              "accountId": 1,
+              "createdDate": "2022-08-17T15:50:38.230Z",
+              "subtotal": 0,
+              "tax": 0,
+              "total": 0,
+              "orderLineItem": [
+                {
+                    "orderLineItemId": 0,
+                    "orderId": 0,
+                    "productId": 0,
+                    "quantity": 0,
+                    "unitPrice": 0
+                }
+              ]
+            }
+        - Delete (Delete): https://localhost:44342/api/Order/1
