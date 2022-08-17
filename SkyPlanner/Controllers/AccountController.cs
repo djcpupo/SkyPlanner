@@ -24,6 +24,7 @@ namespace SkyPlanner.Controllers
             var accounts = new List<Account>();
             accounts = _context.Account
                 .Include("Contacts")
+                .OrderBy(a => a.Name)
                 .ToList();
             return accounts;
         }
@@ -47,6 +48,7 @@ namespace SkyPlanner.Controllers
             orders = _context.Order
                 .Include("OrderLineItem")
                 .Include("OrderLineItem.Product")
+                .OrderByDescending(o => o.CreatedDate)
                 .Where(acc => acc.AccountId == id)
                 .ToList();
             return orders;

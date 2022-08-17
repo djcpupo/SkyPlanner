@@ -21,6 +21,7 @@ namespace SkyPlanner.Controllers
         {
             var products = new List<Product>();
             products = _context.Product
+                .OrderBy(p => p.Name)
                 .ToList();
             return products;
         }
@@ -33,6 +34,18 @@ namespace SkyPlanner.Controllers
             product = _context.Product
                 .FirstOrDefault(pro => pro.ProductId == id);
             return product;
+        }
+
+        // GET api/Product/5
+        [HttpGet("{name}/Search")]
+        public IEnumerable<Product> GetByName(string name)
+        {
+            var products = new List<Product>();
+            products = _context.Product
+                .Where(pro => pro.Name.ToLower().Contains(name.ToLower()))
+                .OrderBy(p => p.Name)
+                .ToList();
+            return products;
         }
     }
 }
