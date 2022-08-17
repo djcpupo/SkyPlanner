@@ -15,8 +15,14 @@ namespace SkyPlanner.Controllers
             _context = context;
         }
 
+
+        /// <summary>
+        /// Gets the Product List.
+        /// </summary>
+        /// <returns>The Product list.</returns>
         // GET: api/Product
         [HttpGet]
+        [Produces("application/json")]
         public IEnumerable<Product> Get()
         {
             var products = new List<Product>();
@@ -26,8 +32,14 @@ namespace SkyPlanner.Controllers
             return products;
         }
 
+
+        /// <summary>
+        /// Gets the Product by Id.
+        /// </summary>
+        /// <returns>The Product.</returns>
         // GET api/Product/5
         [HttpGet("{id}")]
+        [Produces("application/json")]
         public Product Get(int id)
         {
             var product = new Product();
@@ -36,8 +48,14 @@ namespace SkyPlanner.Controllers
             return product;
         }
 
+
+        /// <summary>
+        /// Filter the Product List by name.
+        /// </summary>
+        /// <returns>The Product list.</returns>
         // GET api/Product/5
         [HttpGet("{name}/Search")]
+        [Produces("application/json")]
         public IEnumerable<Product> GetByName(string name)
         {
             var products = new List<Product>();

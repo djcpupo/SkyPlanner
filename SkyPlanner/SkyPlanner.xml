@@ -1,0 +1,90 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>SkyPlanner</name>
+    </assembly>
+    <members>
+        <member name="M:SkyPlanner.Controllers.AccountController.Get">
+            <summary>
+            Gets the Account List.
+            </summary>
+            <returns>The Account list.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.Get(System.Int32)">
+            <summary>
+            Gets the Account by Id.
+            </summary>
+            <returns>The Account.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.GetOrders(System.Int32)">
+            <summary>
+            Gets the list of all orders by Account.
+            </summary>
+            <returns>The list of all orders.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.OrderController.Get">
+            <summary>
+            Gets the Order List.
+            </summary>
+            <returns>The Order list.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.OrderController.Get(System.Int32)">
+            <summary>
+            Gets the Order by Id.
+            </summary>
+            <returns>The Order.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.OrderController.Post(SkyPlanner.Entities.Order)">
+            <summary>
+            Add a new Order.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Order
+                {        
+                  "orderId": 0,
+                  "accountId": 1,
+                  "createdDate": "2022-08-17T15:50:38.230Z",
+                  "subtotal": 0,
+                  "tax": 0,
+                  "total": 0,
+                  "orderLineItem": [
+                    {
+                        "orderLineItemId": 0,
+                        "orderId": 0,
+                        "productId": 0,
+                        "quantity": 0,
+                        "unitPrice": 0
+                    }
+                  ]
+                }
+            </remarks>
+            <returns>The new Order.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.OrderController.Delete(System.Int32)">
+            <summary>
+            Delete the Order by Id.
+            </summary>
+            <returns>Action Result</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.Get">
+            <summary>
+            Gets the Product List.
+            </summary>
+            <returns>The Product list.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.Get(System.Int32)">
+            <summary>
+            Gets the Product by Id.
+            </summary>
+            <returns>The Product.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.GetByName(System.String)">
+            <summary>
+            Filter the Product List by name.
+            </summary>
+            <returns>The Product list.</returns>
+        </member>
+    </members>
+</doc>

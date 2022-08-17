@@ -19,8 +19,14 @@ namespace SkyPlanner.Controllers
             _context = context;
         }
 
+
+        /// <summary>
+        /// Gets the Order List.
+        /// </summary>
+        /// <returns>The Order list.</returns>
         // GET: api/Order
         [HttpGet]
+        [Produces("application/json")]
         public IEnumerable<Order> Get()
         {
             var orders = new List<Order>();
@@ -33,8 +39,13 @@ namespace SkyPlanner.Controllers
             return orders;
         }
 
+        /// <summary>
+        /// Gets the Order by Id.
+        /// </summary>
+        /// <returns>The Order.</returns>
         // GET api/Order/5
         [HttpGet("{id}")]
+        [Produces("application/json")]
         public Order Get(int id)
         {
             var order = new Order();
@@ -46,8 +57,36 @@ namespace SkyPlanner.Controllers
             return order;
         }
 
+
+        /// <summary>
+        /// Add a new Order.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST api/Order
+        ///     {        
+        ///       "orderId": 0,
+        ///       "accountId": 1,
+        ///       "createdDate": "2022-08-17T15:50:38.230Z",
+        ///       "subtotal": 0,
+        ///       "tax": 0,
+        ///       "total": 0,
+        ///       "orderLineItem": [
+        ///         {
+        ///             "orderLineItemId": 0,
+        ///             "orderId": 0,
+        ///             "productId": 0,
+        ///             "quantity": 0,
+        ///             "unitPrice": 0
+        ///         }
+        ///       ]
+        ///     }
+        /// </remarks>
+        /// <returns>The new Order.</returns>
         // POST api/Order
         [HttpPost]
+        [Produces("application/json")]
         public ActionResult Post([FromBody] Order request)
         {
             try
@@ -97,8 +136,14 @@ namespace SkyPlanner.Controllers
             }
         }
 
+
+        /// <summary>
+        /// Delete the Order by Id.
+        /// </summary>
+        /// <returns>Action Result</returns>
         // DELETE api/Order/5
         [HttpDelete("{id}")]
+        [Produces("application/json")]
         public ActionResult Delete(int id)
         {
             try

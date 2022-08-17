@@ -17,8 +17,13 @@ namespace SkyPlanner.Controllers
             _context = context;
         }
 
+        /// <summary>
+        /// Gets the Account List.
+        /// </summary>
+        /// <returns>The Account list.</returns>
         // GET: api/Account
         [HttpGet]
+        [Produces("application/json")]
         public IEnumerable<Account> Get()
         {
             var accounts = new List<Account>();
@@ -29,8 +34,13 @@ namespace SkyPlanner.Controllers
             return accounts;
         }
 
-        // GET api/Account/5
+        /// <summary>
+        /// Gets the Account by Id.
+        /// </summary>
+        /// <returns>The Account.</returns>
+        // GET: api/Account/5
         [HttpGet("{id}")]
+        [Produces("application/json")]
         public Account Get(int id)
         {
             var account = new Account();
@@ -40,8 +50,13 @@ namespace SkyPlanner.Controllers
             return account;
         }
 
-        // GET api/Account/5/Orders
+        /// <summary>
+        /// Gets the list of all orders by Account.
+        /// </summary>
+        /// <returns>The list of all orders.</returns>
+        // GET: api/Account/5/Orders
         [HttpGet("{id}/Orders")]
+        [Produces("application/json")]
         public IEnumerable<Order> GetOrders(int id)
         {
             var orders = new List<Order>();
