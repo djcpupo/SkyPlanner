@@ -53,9 +53,9 @@ namespace SkyPlanner.Controllers
         }
 
         /// <summary>
-        /// Gets the Account by Id.
+        /// Gets the Account by a search term.
         /// </summary>
-        /// <returns>The Account.</returns>
+        /// <returns>The Accounts</returns>
         // GET: api/Account/5
         [HttpGet("{name}/Autocomplete")]
         [Produces("application/json")]

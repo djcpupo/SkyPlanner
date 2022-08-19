@@ -18,9 +18,9 @@
         </member>
         <member name="M:SkyPlanner.Controllers.AccountController.GetAutocomplete(System.String)">
             <summary>
-            Gets the Account by Id.
+            Gets the Account by a search term.
             </summary>
-            <returns>The Account.</returns>
+            <returns>The Accounts</returns>
         </member>
         <member name="M:SkyPlanner.Controllers.AccountController.GetOrders(System.Int32)">
             <summary>
