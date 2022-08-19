@@ -1,0 +1,48 @@
+﻿/* Chrome, Safari, Edge, Opera */
+.no-updown input::-webkit-outer-spin-button,
+.no-updown input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+/* Firefox */
+.no-updown input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.table-scrollable {
+    height: 70vh;
+    overflow-y: auto;
+}
+
+.scrollable-55 {
+    height: 55vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.price-container {
+    text-align: right;
+}
+
+.text-bold {
+    font-weight: 600;
+}
+
+.fs-xlarge {
+    font-size: x-large;
+}
+
+.flex-column {
+    display: flex;
+    align-self: center;
+}
+
+.mb-5px{
+    margin-bottom: 5px;
+}
+
+.order-item {
+    border-bottom: 1px solid;
+    padding: 4px 0 4px 0;
+}

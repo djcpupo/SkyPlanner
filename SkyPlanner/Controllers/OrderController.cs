@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Cors;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SkyPlanner.Entities;
 using System;
@@ -11,6 +12,7 @@ namespace SkyPlanner.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    //[EnableCors("MyAllowSpecificOrigins")]
     public class OrderController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
@@ -46,7 +48,7 @@ namespace SkyPlanner.Controllers
         // GET api/Order/5
         [HttpGet("{id}")]
         [Produces("application/json")]
-        public Order Get(int id)
+        public ActionResult Get(int id)
         {
             var order = new Order();
             order = _context.Order
@@ -54,7 +56,9 @@ namespace SkyPlanner.Controllers
                 .Include("OrderLineItem.Product")
                 .Include("Account")
                 .FirstOrDefault(pro => pro.OrderId == id);
-            return order;
+            if(order == null)
+                return NotFound(id);
+            return new OkObjectResult(order);
         }
 
 

@@ -1,0 +1,68 @@
+﻿@model IEnumerable<SkyPlanner.Entities.Order>
+
+@{
+    ViewData["Title"] = "Orders";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Order List</h1>
+
+<p>
+    @Html.ActionLink("New Order", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-lg-2 col-md-2">
+                @Html.DisplayNameFor(model => model.CreatedDate)
+            </th>
+            <th class="col-lg-4 col-md-3">
+                @Html.DisplayNameFor(model => model.Account)
+            </th>
+            <th class="col-lg-2 col-md-2">
+                @Html.DisplayNameFor(model => model.Subtotal)
+            </th>
+            <th class="col-lg-2 col-md-2">
+                @Html.DisplayNameFor(model => model.Tax)
+            </th>
+            <th class="col-lg-2 col-md-2">
+                @Html.DisplayNameFor(model => model.Total)
+            </th>
+            <th class="col-lg-1 col-md-1"></th>
+        </tr>
+    </thead>
+    <tbody id="orders-table">
+    </tbody>
+</table>
+@section Scripts { 
+<script>         
+    const deleteOrder = (id) => {
+        console.log(id);
+        let willDelete = confirm("Are you sure to execute this action?");
+        if (willDelete)
+            $.ajax({
+                url: '/api/Order/' + id,
+                type: 'DELETE',
+                success: function(result) {
+                    $("#order-" + id).remove();
+                },
+                error: function() {
+                    alert("This Order can not be deleted");
+                }
+            });
+    }
+    $(document).ready(function() {
+        $.get("/api/Order", function(data) {
+            for (i = 0; i < data.length; i++)
+                $("#orders-table").append(
+                    '<tr id="order-' + data[i].orderId + '"><td class="col-lg-2 col-md-2">' + new Date(data[i].createdDate).toLocaleDateString() +
+                    '</td><td class="col-lg-3 col-md-3">' + data[i].account.name +
+                    '</td><td class="col-lg-2 col-md-2">$' + data[i].subtotal +
+                    '</td><td class="col-lg-2 col-md-2">$' + data[i].tax +
+                    '</td><td class="col-lg-2 col-md-2">$' + data[i].total +
+                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><input type="button" onClick="deleteOrder(' + data[i].orderId + ')" value="Delete" class="btn btn-primary" /></td></tr>');
+        });
+
+    });
+ </script>
+}

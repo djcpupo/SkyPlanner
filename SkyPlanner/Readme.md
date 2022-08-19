@@ -35,13 +35,13 @@ Step-by-Step
 
 Swagger
 
-    - When you excecute the app then a Browser tab or window will be open
+    - Navigate to https://localhost:44342/swagger
     - The tab will show all services
     - Every service in that tab will have a small description, the same description is in the source code
     - If click one of those services the you can Try it with the "Try it out" button and you will see the service response y the response box
     - By default the response box have a sample response but not a real one
 
-Postman
+Postman (Request examples)
     Account:
         - List (Get): https://localhost:44342/api/Account
         - Get by Id (Get): https://localhost:44342/api/Account/1

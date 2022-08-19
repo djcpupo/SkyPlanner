@@ -1,0 +1,246 @@
+﻿@model SkyPlanner.Entities.Order
+
+@{
+    ViewData["Title"] = "Create Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>New Order</h1>
+
+<hr />
+<div class="row">
+    <div class="col-md-6 table-scrollable">
+        <div class="form-group">
+            <label for="autocomplete-account">Search</label>
+            <div class="input-group">
+                <input type="text" class="form-control" style="margin-right: 5px" placeholder="Product Name" id="search-product">       
+                <div class="input-group-append">
+                   <button class="btn btn-outline-secondary" type="button" onclick="searchProducts()">Search</button>
+                </div>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-lg-6 col-md-6">
+                        Name
+                    </th>
+                    <th class="col-lg-4 col-md-4">
+                        Price
+                    </th>
+                    <th class="col-lg-2 col-md-2"></th>
+                </tr>
+            </thead>
+            <tbody id="products-table"></tbody>
+        </table>
+    </div>
+    <div class="col-md-6">
+        <div class="form-group">
+            <label for="autocomplete-account">Account</label>
+            <input type="text" class="form-control" placeholder="Account" id="autocomplete-account">            
+        </div>
+        <form class="row g-3 needs-validation" novalidate>
+            <div class="col-md-12 scrollable-55" id="order-form">
+                <div class="row text-bold" style="padding: 8px 0 8px 0; border-bottom: 1px solid;">
+                    <div class="col-md-6">Name</div>
+                    <div class="col-md-2">Quantity</div>
+                    <div class="col-md-2 price-container">Subtotal</div>
+                    <div class="col-md-2"></div>
+                </div>
+              
+            </div>
+            
+            <div class="row price-container">
+                <div class="col-md-8">Subtotal:</div>
+                <div class="col-md-4" id="subtotal-text">$0</div>
+            </div>
+            <div class="row price-container">
+                <div class="col-md-8">Taxes(7%):</div>
+                <div class="col-md-4" id="taxes-text">$0</div>
+            </div>
+            <div class="row price-container text-bold fs-xlarge">
+                <div class="col-md-8">Total:</div>
+                <div class="col-md-4" id="total-text">$0</div>
+            </div>
+            <div class="row" style="margin-top: 10px">
+                <div class="col-md-12" style="text-align: right">
+                    <button class="btn btn-primary" type="submit">Create</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to list", "Index")
+</div>
+
+@section Scripts {
+ <script>
+    var subtotal = 0;
+    var tax = 0;
+    var total = 0;
+    var items = [];
+    var accounts = [];
+    var selectedAccount = 0;
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+              if (items.length == 0 || selectedAccount == 0) {
+                  alert(selectedAccount == 0 ? "Please select an Account" : "Please add at least one product to the order");
+                  event.preventDefault();
+                  event.stopPropagation();
+              } else {
+                  if (form.checkValidity() === false) {
+                      event.preventDefault();
+                      event.stopPropagation();
+                  }
+                  else {
+                      event.preventDefault();
+                      var order = {
+                          "orderId": 0,
+                          "accountId": selectedAccount,
+                          "subtotal": subtotal,
+                          "tax": tax,
+                          "total": total,
+                          "orderLineItem": []
+                      };
+                      items.forEach(item => order.orderLineItem.push({
+                          "orderLineItemId": 0,
+                          "orderId": 0,
+                          "productId": item.productId,
+                          "quantity": item.quantity,
+                          "unitPrice": item.price
+                      }));
+                      $.ajax({
+                          type: "POST",
+                          url: "/api/Order",
+                          data: JSON.stringify(order),
+                          contentType: "application/json; charset=utf-8",
+                          success: function(data) {
+                              console.log("OK");
+                              document.location.pathname = "/Orders";
+                          },
+                          error: function(error) {
+                              console.log("Error");
+                              alert("Error: Try again");
+                          },
+                          dataType: 'json'
+                      });
+                  }
+                  form.classList.add('was-validated');
+              }
+
+          }, false);
+        });
+      }, false);
+    })();
+    $(document).ready(function() {
+        $.get("/api/Product/-*-/Search", function(data) {
+            for (i = 0; i < data.length; i++)
+                appendProduct(data[i]);
+        });
+        $.get("/api/Account", function(data) {
+            accounts = data;
+        });
+    });
+    const appendProduct = (data) => {
+        $("#products-table").append('<tr id="product-' + data.productId + '"><td class="col-lg-6 col-md-6">' + data.name +
+            '</td><td class="col-lg-4 col-md-4">' + data.price +
+            '</td><td class="col-lg-2 col-md-2" style="text-align: right"><input type="button" onClick="addProduct(' + data.productId + ',' + "'" + data.name + "'" + ',' + data.price + ')" value="+" class="btn btn-secondary" style="max-width: 38px;"/></td></tr>');
+    }
+    const addProduct = (id, name, price) => {   
+        $("#order-form").append(
+               '<div class="row order-item" id="order-item-'+ id +'">' + 
+                    '<input style="display:none" id="product-id-' + id + '" value="' + id + '">' + 
+                    '<input style="display:none" id="product-name-' + id + '" value="' + name + '">' + 
+                    '<input style="display:none" id="product-price-' + id + '" value="' + price + '">' + 
+                    '<div class="col-md-6 flex-column">' + name + '</div>' + 
+                    '<div class="col-md-2">' + 
+                        '<input type="number" class="form-control" id="product-quantity-' + id + '" placeholder="0" required min="1" step="1" onchange="updateItemSubtotal(' + id + ')" value="1">' + 
+                        '<div class="invalid-feedback">' + 
+                          'Enter an amount' + 
+                        '</div>' + 
+                    '</div>' + 
+                    '<div class="col-md-2 flex-column price-container" id="product-subtotal-' + id + '">$'+ price +'</div>' + 
+                    '<div class="col-md-2 flex-column price-container" style="align-items: end;" id="product-btn"><input type="button" onClick="deleteProduct(' + id + ')" value="-" class="btn btn-secondary" style="max-width: 38px;"/></div>' +
+                '</div>'
+        );
+        items.push({
+            productId: id,
+            name,
+            price,
+            quantity: 1
+        });
+        calculateValues();
+        $("#product-" + id).remove();
+
+    }
+    const calculateValues = () => {
+        subtotal = 0;
+        items.forEach(i => subtotal = subtotal + i.price * i.quantity);
+        tax = Number.parseFloat((subtotal * 0.07).toFixed(2));
+        total = subtotal + tax;
+        $("#subtotal-text").text(subtotal.toString());
+        $("#taxes-text").text(tax.toString());
+        $("#total-text").text(total.toString());
+    }
+    const deleteProduct = (id) => { 
+        console.log(id);
+        var quantity = $("#product-quantity-" + id).val()
+        var product = items.find(i => i.productId == id);
+        if (product) { 
+            appendProduct(product);
+            $("#order-item-" + id).remove();
+            items = items.filter(i => i.productId !== id);
+            calculateValues();
+        }
+            
+    }
+    const updateItemSubtotal = (id) => {
+        console.log(id);
+        var quantity = Number.parseInt($("#product-quantity-" + id).val());
+        var product = items.find(i => i.productId == id);
+        product.quantity = quantity;
+        $("#product-subtotal-" + id).text('$' + quantity*product.price);
+        calculateValues();    
+    }
+    document.addEventListener('DOMContentLoaded', e => {
+        $('#autocomplete-account').autocomplete({
+          source: function( request, response ) {
+            $.ajax({
+              url: "/api/Account/" + request.term + "/Autocomplete",
+              dataType: "json",
+              contentType: "application/json; charset=utf-8",
+              success: function( data ) {
+                response( data );
+              }
+            });
+          },
+          minLength: 1,
+          select: function( event, ui ) {
+              var acc = accounts.find(a => a.name == ui.item.value);
+              console.log(ui, acc, accounts);
+              if (acc) { 
+                  selectedAccount = acc.accountId;
+                  $('#autocomplete-account').attr('readonly', 'readonly');
+              }
+          }
+        })
+    }, false);
+    const searchProducts = () => {
+        var term = $("#search-product").val();
+        $.get("/api/Product/" + (term === '' || term === null ? '-*-' : term) + "/Search", function(data) {
+            $("#products-table").empty();
+            data.forEach(d => {
+                var prod = items.find(i=>i.productId==d.productId);
+                if(!prod)
+                    appendProduct(d);
+            });
+        });
+    }
+</script>
+}

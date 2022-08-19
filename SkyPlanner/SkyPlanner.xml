@@ -16,11 +16,63 @@
             </summary>
             <returns>The Account.</returns>
         </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.GetAutocomplete(System.String)">
+            <summary>
+            Gets the Account by Id.
+            </summary>
+            <returns>The Account.</returns>
+        </member>
         <member name="M:SkyPlanner.Controllers.AccountController.GetOrders(System.Int32)">
             <summary>
             Gets the list of all orders by Account.
             </summary>
             <returns>The list of all orders.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.Post(SkyPlanner.Entities.Account)">
+            <summary>
+            Add a new Account.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Account
+                {        
+                  "Name": "Name",
+                  "Phone": "PhoneNumber",
+                  "Street": "Street",
+                  "City": "City",
+                  "State": "State",
+                  "Zip": "Zip"
+                }
+            </remarks>
+            <returns>The new Account.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.PostContact(SkyPlanner.Entities.Contact,System.Int32)">
+            <summary>
+            Add a new Contact.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Account/1/Contact
+                {        
+                  "Name": "Name",
+                  "Phone": "PhoneNumber"
+                }
+            </remarks>
+            <returns>The new Contact.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.DeleteContact(System.Int32)">
+            <summary>
+            Delete the Contact by Id.
+            </summary>
+            <returns>Action Result</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.Delete(System.Int32)">
+            <summary>
+            Delete the Account by Id.
+            </summary>
+            <returns>Action Result</returns>
         </member>
         <member name="M:SkyPlanner.Controllers.OrderController.Get">
             <summary>
@@ -85,6 +137,28 @@
             Filter the Product List by name.
             </summary>
             <returns>The Product list.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.Post(SkyPlanner.Entities.Product)">
+            <summary>
+            Add a new Product.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Product
+                {        
+                  "name": "Name",
+                  "Phone": "PhoneNumber",
+                  "Price": 100
+                }
+            </remarks>
+            <returns>The new Product.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.Delete(System.Int32)">
+            <summary>
+            Delete the Product by Id.
+            </summary>
+            <returns>Action Result</returns>
         </member>
     </members>
 </doc>

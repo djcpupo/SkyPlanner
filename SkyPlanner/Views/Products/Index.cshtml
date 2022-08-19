@@ -1,0 +1,59 @@
+﻿@model IEnumerable<SkyPlanner.Entities.Product>
+
+@{
+    ViewData["Title"] = "Products";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Product List</h1>
+
+<p>
+    @Html.ActionLink("New Product", "Create")
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th class="col-lg-6 col-md-6">
+                @Html.DisplayNameFor(model => model.Name)
+            </th>
+            <th class="col-lg-2 col-md-2">
+                @Html.DisplayNameFor(model => model.Price)
+            </th>
+            <th class="col-lg-3 col-md-3">
+                @Html.DisplayNameFor(model => model.Phone)
+            </th>
+            <th class="col-lg-1 col-md-1"></th>
+        </tr>
+    </thead>
+    <tbody id="products-table"></tbody>
+</table>
+
+@section Scripts { 
+<script>         
+    const deleteProduct = (id) => {
+        console.log(id);
+        let willDelete = confirm("Are you sure to execute this action?");
+        if (willDelete)
+            $.ajax({
+                url: '/api/Product/' + id,
+                type: 'DELETE',
+                success: function(result) {
+                    $("#product-" + id).remove();
+                },
+                error: function() {
+                    alert("This Product can not be deleted");
+                }
+            });
+    }
+    $(document).ready(function() {
+        $.get("/api/Product", function(data) {
+            for (i = 0; i < data.length; i++)
+                $("#products-table").append('<tr id="product-' + data[i].productId + '"><td class="col-lg-6 col-md-6">' + data[i].name +
+                    '</td><td class="col-lg-2 col-md-2">' + data[i].price +
+                    '</td><td class="col-lg-3 col-md-3">' + data[i].phone +
+                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><input type="button" onClick="deleteProduct(' + data[i].productId + ')" value="Delete" class="btn btn-primary" /></td></tr>');
+        });
+
+    });
+ </script>
+}

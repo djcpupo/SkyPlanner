@@ -12,7 +12,7 @@ namespace SkyPlanner.Entities
         public string State { get; set; }
         public string Zip { get; set; }
 	
-        public virtual ICollection<Contact> Contacts { get; set; }
-        public virtual ICollection<Order> Orders { get; set; }
+        public virtual ICollection<Contact> Contact { get; set; }
+        public virtual ICollection<Order> Order { get; set; }
     }
 }
