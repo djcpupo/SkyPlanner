@@ -121,12 +121,11 @@
                           data: JSON.stringify(order),
                           contentType: "application/json; charset=utf-8",
                           success: function(data) {
-                              console.log("OK");
                               document.location.pathname = "/Orders";
                           },
                           error: function(error) {
-                              console.log("Error");
-                              alert("Error: Try again");
+                              alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                              event.stopPropagation();
                           },
                           dataType: 'json'
                       });

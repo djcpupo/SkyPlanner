@@ -66,9 +66,9 @@
                           console.log("OK");
                           document.location.pathname = "/Products";
                       },
-                      error: function(error) {                        
-                          console.log("Error");
-                          alert("Error: Try again or place a different product name");
+                      error: function(error) {     
+                          alert(error && error.responseJSON ? error.responseJSON : "Error: Try again or place a different product name");
+                          event.stopPropagation();
                       },
                       dataType: 'json'
                     });

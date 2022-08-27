@@ -95,7 +95,7 @@ namespace SkyPlanner.Controllers
         ///     POST api/Account
         ///     {        
         ///       "Name": "Name",
-        ///       "Phone": "PhoneNumber",
+        ///       "Phone": "7863052365",
         ///       "Street": "Street",
         ///       "City": "City",
         ///       "State": "State",
@@ -114,9 +114,13 @@ namespace SkyPlanner.Controllers
                 {
                     return new BadRequestObjectResult(ModelState);
                 }
+                if (request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
                 var account = _context.Account.FirstOrDefault(p => p.Name.ToLower() == request.Name.ToLower());
                 if (account != null)
-                    return new BadRequestResult();
+                    return BadRequest("There is another account with this Name: " + request.Name);
 
                 account = new Account
                 {
@@ -136,7 +140,7 @@ namespace SkyPlanner.Controllers
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
 
@@ -149,7 +153,7 @@ namespace SkyPlanner.Controllers
         ///     POST api/Account/1/Contact
         ///     {        
         ///       "Name": "Name",
-        ///       "Phone": "PhoneNumber"
+        ///       "Phone": "7863052365"
         ///     }
         /// </remarks>
         /// <returns>The new Contact.</returns>
@@ -167,11 +171,17 @@ namespace SkyPlanner.Controllers
 
                 var account = _context.Account.FirstOrDefault(p => p.AccountId == id);
                 if (account == null)
-                    return NotFound();
+                    return NotFound("There is no account with this ID: " + id.ToString());
 
-                var contact = _context.Contact.FirstOrDefault(c => c.Name.ToLower() == request.Name.ToLower() && c.AccountId == id);
+                var contact = _context.Contact.FirstOrDefault(c => c.Name.ToLower() == request.Name.ToLower() && c.AccountId == account.AccountId);
                 if (contact != null)
-                    return new BadRequestResult();
+                    return BadRequest("There is another contact in this account with this Name: " + request.Name);
+
+                if(request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
 
                 contact = new Contact
                 {
@@ -186,7 +196,7 @@ namespace SkyPlanner.Controllers
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
 
@@ -205,14 +215,14 @@ namespace SkyPlanner.Controllers
                 contact = _context.Contact
                     .FirstOrDefault(pro => pro.ContactId == id);
                 if (contact == null)
-                    return NotFound(id);
+                    return NotFound("There is no contact with this ID: " + id.ToString());
                 _context.Contact.Remove(contact);
                 _context.SaveChanges();
                 return new OkResult();
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
 
@@ -232,11 +242,11 @@ namespace SkyPlanner.Controllers
                     .Include("Contact")
                     .FirstOrDefault(pro => pro.AccountId == id);
                 if (account == null)
-                    return NotFound(id);
+                    return NotFound("There is no account with this ID: " + id.ToString());
                 var hasOrders = _context.Order.Any(o => o.AccountId == id);
                 // Do not delete the Account if has at least one order created
                 if (hasOrders)
-                    return BadRequest(id);
+                    return BadRequest("This account has related orders and can't be deleted. Account ID: " + id);
                 foreach (var item in account.Contact)
                 {
                     _context.Contact.Remove(item);
@@ -247,7 +257,7 @@ namespace SkyPlanner.Controllers
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
     }

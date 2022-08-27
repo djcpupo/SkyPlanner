@@ -100,43 +100,45 @@ namespace SkyPlanner.Controllers
                     return new BadRequestObjectResult(ModelState);
                 }
                 var account = _context.Account.FirstOrDefault(acc => acc.AccountId == request.AccountId);
-                if (account != null && request.OrderLineItem.Any())
+                if (account == null)
+                    return BadRequest("There is no account with this ID: " + request.AccountId.ToString());
+                if(!request.OrderLineItem.Any())
+                    return BadRequest("You must add at least one product to the order.");
+                var subtotal = request.OrderLineItem.Sum(li => li.Quantity * li.UnitPrice);
+                var tax = subtotal * 7 / 100;
+                var total = subtotal + tax;
+                if (subtotal != request.Subtotal || tax != request.Tax || total != request.Total)
+                    return BadRequest("Please correct your order Subtotal, Taxes or Total amount.");
+                var order = new Order
                 {
-                    var subtotal = request.OrderLineItem.Sum(li => li.Quantity * li.UnitPrice);
-                    var tax = subtotal * 7 / 100;
-                    var total = subtotal + tax;
-                    if (subtotal == request.Subtotal && tax == request.Tax && total == request.Total)
+                    AccountId = request.AccountId,
+                    CreatedDate = DateTime.Now,
+                    OrderId = request.OrderId,
+                    Subtotal = request.Subtotal,
+                    Tax = request.Tax,
+                    Total = request.Total,
+                    OrderLineItem = new List<OrderLineItem>()
+                };
+                foreach (var item in request.OrderLineItem)
+                {
+                    var lineItem = _context.Product.Where(p=>p.ProductId==item.ProductId).FirstOrDefault();
+                    if (lineItem == null)
+                        return BadRequest("There is no product with this ID: " + item.ProductId.ToString());
+                    order.OrderLineItem.Add(new OrderLineItem
                     {
-                        var order = new Order
-                        {
-                            AccountId = request.AccountId,
-                            CreatedDate = DateTime.Now,
-                            OrderId = request.OrderId,
-                            Subtotal = request.Subtotal,
-                            Tax = request.Tax,
-                            Total = request.Total,
-                            OrderLineItem = new List<OrderLineItem>()
-                        };
-                        foreach (var item in request.OrderLineItem)
-                        {
-                            order.OrderLineItem.Add(new OrderLineItem
-                            {
-                                OrderId = order.OrderId,
-                                Quantity = item.Quantity,
-                                UnitPrice = item.UnitPrice,
-                                ProductId = item.ProductId
-                            });
-                        }
-                        _context.Order.Add(order);
-                        _context.SaveChanges();
-                        return new OkObjectResult(order);
-                    }
+                        OrderId = order.OrderId,
+                        Quantity = item.Quantity,
+                        UnitPrice = item.UnitPrice,
+                        ProductId = item.ProductId
+                    });
                 }
-                return new BadRequestResult();
+                _context.Order.Add(order);
+                _context.SaveChanges();
+                return new OkObjectResult(order);
             }
             catch (Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
 
@@ -168,7 +170,7 @@ namespace SkyPlanner.Controllers
             }
             catch (Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
     }

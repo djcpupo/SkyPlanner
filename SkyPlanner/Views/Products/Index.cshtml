@@ -31,7 +31,6 @@
 @section Scripts { 
 <script>         
     const deleteProduct = (id) => {
-        console.log(id);
         let willDelete = confirm("Are you sure to execute this action?");
         if (willDelete)
             $.ajax({
@@ -40,8 +39,8 @@
                 success: function(result) {
                     $("#product-" + id).remove();
                 },
-                error: function() {
-                    alert("This Product can not be deleted");
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "This Product can not be deleted");
                 }
             });
     }

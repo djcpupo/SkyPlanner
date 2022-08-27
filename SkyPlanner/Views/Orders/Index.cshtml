@@ -46,8 +46,8 @@
                 success: function(result) {
                     $("#order-" + id).remove();
                 },
-                error: function() {
-                    alert("This Order can not be deleted");
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "This Product can not be deleted");
                 }
             });
     }

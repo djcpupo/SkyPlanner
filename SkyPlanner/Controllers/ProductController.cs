@@ -80,7 +80,7 @@ namespace SkyPlanner.Controllers
         ///     POST api/Product
         ///     {        
         ///       "name": "Name",
-        ///       "Phone": "PhoneNumber",
+        ///       "Phone": "7863052365",
         ///       "Price": 100
         ///     }
         /// </remarks>
@@ -96,9 +96,14 @@ namespace SkyPlanner.Controllers
                 {
                     return new BadRequestObjectResult(ModelState);
                 }
-                var product = _context.Product.FirstOrDefault(p=>p.Name.ToLower()==request.Name.ToLower());
+
+                if (request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
+                var product = _context.Product.FirstOrDefault(p => p.Name.ToLower() == request.Name.ToLower());
                 if (product != null)
-                    return new BadRequestResult();
+                    return BadRequest("There is another product with this Name: " + request.Name);
 
                 product = new Product
                 {
@@ -112,7 +117,7 @@ namespace SkyPlanner.Controllers
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
 
@@ -131,18 +136,18 @@ namespace SkyPlanner.Controllers
                 product = _context.Product
                     .FirstOrDefault(pro => pro.ProductId == id);
                 if (product == null)
-                    return NotFound(id);
+                    return NotFound("There is no product with this ID: " + id.ToString());
                 var hasOrders = _context.OrderLineItem.Any(o => o.ProductId == id);
                 // Do not delete the product if has at least one order created
-                if(hasOrders)
-                    return BadRequest(id);
+                if (hasOrders)
+                    return BadRequest("This product has related orders and can't be deleted. Product ID: " + id);
                 _context.Product.Remove(product);
                 _context.SaveChanges();
                 return new OkResult();
             }
             catch (System.Exception)
             {
-                return new BadRequestResult();
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
             }
         }
     }

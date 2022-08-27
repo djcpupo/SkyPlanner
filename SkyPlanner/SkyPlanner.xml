@@ -38,7 +38,7 @@
                 POST api/Account
                 {        
                   "Name": "Name",
-                  "Phone": "PhoneNumber",
+                  "Phone": "7863052365",
                   "Street": "Street",
                   "City": "City",
                   "State": "State",
@@ -57,7 +57,7 @@
                 POST api/Account/1/Contact
                 {        
                   "Name": "Name",
-                  "Phone": "PhoneNumber"
+                  "Phone": "7863052365"
                 }
             </remarks>
             <returns>The new Contact.</returns>
@@ -148,7 +148,7 @@
                 POST api/Product
                 {        
                   "name": "Name",
-                  "Phone": "PhoneNumber",
+                  "Phone": "7863052365",
                   "Price": 100
                 }
             </remarks>
