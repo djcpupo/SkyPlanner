@@ -8,7 +8,7 @@
 <h1>Order List</h1>
 
 <p>
-    @Html.ActionLink("New Order", "Create")
+    @Html.ActionLink("New Order", "Create", "Orders", null, new {@class = "btn btn-success" })
 </p>
 <table class="table">
     <thead>
@@ -51,6 +51,9 @@
                 }
             });
     }
+    const detail = (id) => {
+        document.location.href = "/Orders/Detail/" + id;
+    }
     $(document).ready(function() {
         $.get("/api/Order", function(data) {
             for (i = 0; i < data.length; i++)
@@ -60,7 +63,7 @@
                     '</td><td class="col-lg-2 col-md-2">$' + data[i].subtotal +
                     '</td><td class="col-lg-2 col-md-2">$' + data[i].tax +
                     '</td><td class="col-lg-2 col-md-2">$' + data[i].total +
-                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><input type="button" onClick="deleteOrder(' + data[i].orderId + ')" value="Delete" class="btn btn-primary" /></td></tr>');
+                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><div style="text-align: right; display: flex;"><input type="button" style="margin-right: 5px;" onClick="detail(' + data[i].orderId + ')" value="Details" class="btn btn-light" /><input type="button" onClick="deleteOrder(' + data[i].orderId + ')" value="Delete" class="btn btn-danger" /></td></tr>');
         });
 
     });

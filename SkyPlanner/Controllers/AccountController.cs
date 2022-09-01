@@ -145,6 +145,65 @@ namespace SkyPlanner.Controllers
         }
 
         /// <summary>
+        /// Edit the Account.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST api/Account/2
+        ///     {        
+        ///       "Name": "Name",
+        ///       "Phone": "7863052365",
+        ///       "Street": "Street",
+        ///       "City": "City",
+        ///       "State": "State",
+        ///       "Zip": "Zip"
+        ///     }
+        /// </remarks>
+        /// <returns>The Account.</returns>
+        // POST api/Account
+        [HttpPut("{id}")]
+        [Produces("application/json")]
+        public ActionResult Put([FromBody] Account request, int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return new BadRequestObjectResult(ModelState);
+                }
+                var tempAccount = _context.Account.FirstOrDefault(a => a.AccountId == id);
+                if (tempAccount == null)
+                    return NotFound("There is not accounts with this Id: " + id.ToString());
+                if (request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
+                var account = _context.Account.FirstOrDefault(p => p.Name.ToLower() == request.Name.ToLower() && p.AccountId != id);
+                if (account != null)
+                    return BadRequest("There is another account with this Name: " + request.Name);
+
+                tempAccount.Name = request.Name;
+                tempAccount.Phone = request.Phone;
+                tempAccount.Street = request.Street;
+                tempAccount.City = request.City;
+                tempAccount.State = request.State;
+                tempAccount.Zip = request.Zip;
+                tempAccount.Contact = new List<Contact>();
+                tempAccount.Order = new List<Order>();
+
+                _context.Account.Update(tempAccount);
+                _context.SaveChanges();
+                return new OkObjectResult(tempAccount);
+
+            }
+            catch (System.Exception)
+            {
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
+            }
+        }
+
+        /// <summary>
         /// Add a new Contact.
         /// </summary>
         /// <remarks>
@@ -193,6 +252,85 @@ namespace SkyPlanner.Controllers
                 _context.SaveChanges();
                 return new OkObjectResult(contact);
 
+            }
+            catch (System.Exception)
+            {
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
+            }
+        }
+
+        /// <summary>
+        /// Edit Contact.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     POST api/Account/1/Contact
+        ///     {        
+        ///       "Name": "Name",
+        ///       "Phone": "7863052365",
+        ///       "AccountId": 1,
+        ///       "ContactId": 1
+        ///     }
+        /// </remarks>
+        /// <returns>The Contact.</returns>
+        // PUT api/Account/1/Contact
+        [HttpPut("{id}/Contact")]
+        [Produces("application/json")]
+        public ActionResult PutContact([FromBody] Contact request, int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return new BadRequestObjectResult(ModelState);
+                }
+
+                var tempContact = _context.Contact.FirstOrDefault(p => p.ContactId == id);
+                if (tempContact == null)
+                    return NotFound("There is no contact with this ID: " + id.ToString());
+
+                var contact = _context.Contact.FirstOrDefault(c => c.Name.ToLower() == request.Name.ToLower() && c.AccountId == tempContact.AccountId && c.ContactId != id);
+                if (contact != null)
+                    return BadRequest("There is another contact in this account with this Name: " + request.Name);
+
+                if (request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
+
+                tempContact.Name = request.Name;
+                tempContact.Phone = request.Phone;
+
+                _context.Contact.Update(tempContact);
+                _context.SaveChanges();
+                return new OkObjectResult(tempContact);
+
+            }
+            catch (System.Exception)
+            {
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
+            }
+        }
+
+        /// <summary>
+        /// Get the Contact by Id.
+        /// </summary>
+        /// <returns>Action Result</returns>
+        // Get api/Account/5/Contact
+        [HttpGet("{id}/Contact")]
+        [Produces("application/json")]
+        public ActionResult GetContact(int id)
+        {
+            try
+            {
+                var contact = new Contact();
+                contact = _context.Contact
+                    .FirstOrDefault(pro => pro.ContactId == id);
+                if (contact == null)
+                    return NotFound("There is no contact with this ID: " + id.ToString());
+                return new OkObjectResult(contact);
             }
             catch (System.Exception)
             {

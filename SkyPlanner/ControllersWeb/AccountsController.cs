@@ -23,5 +23,34 @@ namespace SkyPlanner.Controllers
         {
               return View(await _context.Account.ToListAsync());
         }
+
+        // GET: Accounts/Create
+        public IActionResult Create()
+        {
+            return View();
+        }
+
+        // GET: Accounts/Edit/{id}
+        public IActionResult Edit(string id)
+        {
+            ViewBag.Id = id;
+            return View();
+        }
+
+        // GET: Accounts/CreateContact/{id}
+        public IActionResult CreateContact(string id)
+        {
+            ViewBag.Id = id;
+            return View();
+        }
+
+        // GET: Accounts/EditContact/{id}
+        public IActionResult EditContact(int id)
+        {
+            var contact = _context.Contact.FirstOrDefault(c => c.ContactId == id);
+            ViewBag.Id = id.ToString();
+            ViewBag.AccountId = contact.AccountId.ToString();
+            return View();
+        }
     }
 }

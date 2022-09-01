@@ -47,6 +47,25 @@
             </remarks>
             <returns>The new Account.</returns>
         </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.Put(SkyPlanner.Entities.Account,System.Int32)">
+            <summary>
+            Edit the Account.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Account/2
+                {        
+                  "Name": "Name",
+                  "Phone": "7863052365",
+                  "Street": "Street",
+                  "City": "City",
+                  "State": "State",
+                  "Zip": "Zip"
+                }
+            </remarks>
+            <returns>The Account.</returns>
+        </member>
         <member name="M:SkyPlanner.Controllers.AccountController.PostContact(SkyPlanner.Entities.Contact,System.Int32)">
             <summary>
             Add a new Contact.
@@ -61,6 +80,29 @@
                 }
             </remarks>
             <returns>The new Contact.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.PutContact(SkyPlanner.Entities.Contact,System.Int32)">
+            <summary>
+            Edit Contact.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                POST api/Account/1/Contact
+                {        
+                  "Name": "Name",
+                  "Phone": "7863052365",
+                  "AccountId": 1,
+                  "ContactId": 1
+                }
+            </remarks>
+            <returns>The Contact.</returns>
+        </member>
+        <member name="M:SkyPlanner.Controllers.AccountController.GetContact(System.Int32)">
+            <summary>
+            Get the Contact by Id.
+            </summary>
+            <returns>Action Result</returns>
         </member>
         <member name="M:SkyPlanner.Controllers.AccountController.DeleteContact(System.Int32)">
             <summary>

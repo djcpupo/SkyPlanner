@@ -1,0 +1,79 @@
+﻿@model SkyPlanner.Entities.Account
+
+@{
+    ViewData["Title"] = "Create Contact";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Id = ViewBag.Id;
+}
+
+<h1>Create Contact</h1>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form class="row g-3 needs-validation" novalidate>
+          <div class="col-md-12">
+            <label for="contact-name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="contact-name" placeholder="Name" required>
+            <div class="invalid-feedback">
+              Enter the contact name
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="contact-phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="contact-phone" placeholder="Phone" required>
+            <div class="invalid-feedback">
+              Please provide a phone
+            </div>
+          </div>
+          <div class="col-12" style="text-align: right">
+            <button class="btn btn-primary" type="submit">Create</button>
+          </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to details", "Edit", "Accounts", new {@id = Id})
+</div>
+
+@section Scripts {
+ <script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+              }
+              else {
+                  event.preventDefault();
+                  $.ajax({
+                      type: "POST",
+                      url: "/api/Account/" + @Id + "/Contact",
+                      data: JSON.stringify({ 
+                          name: $("#contact-name").val(), 
+                          phone: $("#contact-phone").val(),
+                          accountId: @Id
+                      }),
+                      contentType:"application/json; charset=utf-8",
+                      success: function( data ) {  
+                          document.location.pathname = "/Accounts/Edit/" + @Id;
+                      },
+                      error: function(error) {     
+                          alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                          event.stopPropagation();
+                      },
+                      dataType: 'json'
+                    });
+              }
+              form.classList.add('was-validated');
+
+          }, false);
+        });
+      }, false);
+    })();
+</script>
+}

@@ -1,0 +1,82 @@
+﻿@model SkyPlanner.Entities.Order
+
+@{
+    ViewData["Title"] = "Order";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    int OrderId = ViewBag.OrderId;
+}
+
+<h1>Order</h1>
+
+<hr />
+<div class="row">    
+    <div class="col-md-12">
+        <div class="form-group">
+            <label for="autocomplete-account" class="text-bold">Account</label>
+            <input type="text" class="form-control" placeholder="Account" id="autocomplete-account">            
+        </div>
+        <form class="row g-3 needs-validation" novalidate>
+            <div class="col-md-12 scrollable-55" id="order-form">
+                <div class="row text-bold" style="padding: 8px 0 8px 0; border-bottom: 1px solid;">
+                    <div class="col-md-4">Name</div>
+                    <div class="col-md-2 price-container">Quantity</div>
+                    <div class="col-md-3 price-container">Unit Price</div>
+                    <div class="col-md-3 price-container">Subtotal</div>
+                </div>
+              
+            </div>
+            
+            <div class="row price-container">
+                <div class="col-md-9">Subtotal:</div>
+                <div class="col-md-3" id="subtotal-text">$0</div>
+            </div>
+            <div class="row price-container">
+                <div class="col-md-9">Taxes(7%):</div>
+                <div class="col-md-3" id="taxes-text">$0</div>
+            </div>
+            <div class="row price-container text-bold fs-xlarge">
+                <div class="col-md-9">Total:</div>
+                <div class="col-md-3" id="total-text">$0</div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to list", "Index")
+</div>
+
+@section Scripts {
+ <script>
+    var order = null;
+    
+    $(document).ready(function() {
+        $.get("/api/Order/" + @OrderId.ToString(), function(data) {
+            order = data;
+            if (data) {
+                $('#autocomplete-account').val(order.account.name);
+                $('#autocomplete-account').attr('readonly', 'readonly');
+                $("#subtotal-text").text(order.subtotal.toString());
+                $("#taxes-text").text(order.tax.toString());
+                $("#total-text").text(order.total.toString());
+                for (i = 0; i < order.orderLineItem.length; i++)
+                    addProduct(order.orderLineItem[i].productId, order.orderLineItem[i].product.name, order.orderLineItem[i].unitPrice, order.orderLineItem[i].quantity);
+            }
+        });
+    });
+    const addProduct = (id, name, price, quantity) => {   
+        $("#order-form").append(
+               '<div class="row order-item" id="order-item-'+ id +'">' + 
+                    '<input style="display:none" id="product-id-' + id + '" value="' + id + '">' + 
+                    '<input style="display:none" id="product-name-' + id + '" value="' + name + '">' + 
+                    '<input style="display:none" id="product-price-' + id + '" value="' + price + '">' + 
+                    '<div class="col-md-4 flex-column">' + name + '</div>' + 
+                    '<div class="col-md-2 flex-column price-container">' + quantity + '</div>' +                     
+                    '<div class="col-md-3 flex-column price-container">$' + price + '</div>' + 
+                    '<div class="col-md-3 flex-column price-container" id="product-subtotal-' + id + '">$'+ (price * quantity) +'</div>' + 
+                '</div>'
+        );
+
+    }
+</script>
+}

@@ -23,14 +23,20 @@ namespace SkyPlanner.Controllers
         {
             var applicationDbContext = _context.Order.Include(o => o.Account);
             return View(await applicationDbContext.ToListAsync());
-        }
-        
+        }      
 
-        // GET: Orders/Create
-        public IActionResult Create()
+        // GET: Orders/Create/{id}
+        public IActionResult Create(int id)
         {
-            ViewData["AccountId"] = new SelectList(_context.Account, "AccountId", "AccountId");
+            ViewBag.AccountId = id;
             return View();
-        }        
+        }
+
+        // GET: Orders/Detail/{id}
+        public IActionResult Detail(int id)
+        {
+            ViewBag.OrderId = id;
+            return View();
+        }
     }
 }

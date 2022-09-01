@@ -8,7 +8,7 @@
 <h1>Account List</h1>
 
 <p>
-    
+    @Html.ActionLink("New Account", "Create", "Accounts", null, new {@class = "btn btn-success" })
 </p>
 <table class="table">
     <thead>
@@ -20,33 +20,49 @@
                 @Html.DisplayNameFor(model => model.Phone)
             </th>
             <th class="col-lg-3 col-md-3">
-                @Html.DisplayNameFor(model => model.Street)
-            </th>
-            <th class="col-lg-2 col-md-2">
                 @Html.DisplayNameFor(model => model.City)
             </th>
-            <th class="col-lg-1 col-md-1">
+            <th class="col-lg-2 col-md-2">
                 @Html.DisplayNameFor(model => model.State)
             </th>
             <th class="col-lg-1 col-md-1">
                 @Html.DisplayNameFor(model => model.Zip)
+            </th>
+            <th class="col-lg-1 col-md-1">
             </th>
         </tr>
     </thead>
     <tbody id="accounts-table"></tbody>
 </table>
 @section Scripts { 
-<script>         
+<script>    
+    const deleteAccount = (id) => {
+        let willDelete = confirm("Are you sure to execute this action?");
+        if (willDelete)
+            $.ajax({
+                url: '/api/Account/' + id,
+                type: 'DELETE',
+                success: function(result) {
+                    $("#account-" + id).remove();
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "This Account can not be deleted");
+                }
+            });
+    }
+    const editAccount = (id) => {
+        document.location.href = "/Accounts/Edit/" + id;
+    }
     $(document).ready(function() {
         $.get("/api/Account", function(data) {
             for (i = 0; i < data.length; i++) { 
                 $("#accounts-table").append(
                     '<tr id="account-' + data[i].accountId + '"><td class="col-lg-3 col-md-3">' + data[i].name +
                     '</td><td class="col-lg-2 col-md-2">' + data[i].phone +
-                    '</td><td class="col-lg-3 col-md-3">' + data[i].street +
-                    '</td><td class="col-lg-2 col-md-2">' + data[i].city +
-                    '</td><td class="col-lg-1 col-md-1">' + data[i].state +
-                    '</td><td class="col-lg-1 col-md-1">' + data[i].zip + '</td></tr>');
+                    '</td><td class="col-lg-3 col-md-3">' + data[i].city +
+                    '</td><td class="col-lg-2 col-md-2">' + data[i].state +
+                    '</td><td class="col-lg-1 col-md-1">' + data[i].zip +
+                    '</td><td class="col-lg-1 col-md-1"><div style="text-align: right; display: flex;"><input type="button" style="margin-right: 5px;" onClick="editAccount(' + data[i].accountId + ')" value="Details" class="btn btn-light" /><input type="button" onClick="deleteAccount(' + data[i].accountId + ')" value="Delete" class="btn btn-danger" /></div></td></tr>');
             }
         });
 

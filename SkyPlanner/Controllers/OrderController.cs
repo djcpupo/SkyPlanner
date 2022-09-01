@@ -37,6 +37,7 @@ namespace SkyPlanner.Controllers
                 .Include("OrderLineItem.Product")
                 .Include("Account")
                 .OrderByDescending(o => o.CreatedDate)
+                .ThenByDescending(o => o.OrderId)
                 .ToList();
             return orders;
         }

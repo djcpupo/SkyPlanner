@@ -1,0 +1,178 @@
+﻿@model SkyPlanner.Entities.Account
+
+@{
+    ViewData["Title"] = "Edit Account";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Id = ViewBag.Id;
+}
+<div class="row">
+    <div class="col-md-8">
+        <h1>Edit Account</h1>
+    </div>
+    <div class="col-md-4" style="text-align: right">
+        @Html.ActionLink("Add new order", "Create", "Orders", new {@id = Id}, new {@class = "btn btn-success", @style = "margin-right: 5px;"})
+        @Html.ActionLink("Add new contact", "CreateContact", "Accounts", new {@id = Id}, new {@class = "btn btn-success" })
+    </div>
+</div>
+<hr />
+<div class="row">
+    <div class="col-md-6">
+        <form class="row g-3 needs-validation" novalidate>
+          <div class="col-md-12">
+            <label for="account-name" class="form-label">Name</label>
+            <input type="text" class="form-control" id="account-name" placeholder="Name" required>
+            <div class="invalid-feedback">
+              Enter the account name
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="account-phone" class="form-label">Phone</label>
+            <input type="tel" class="form-control" id="account-phone" placeholder="Phone" required>
+            <div class="invalid-feedback">
+              Please provide a phone
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="account-street" class="form-label">Street</label>
+            <input type="text" class="form-control" id="account-street" placeholder="Street" required>
+            <div class="invalid-feedback">
+              Please provide a valid street
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="account-city" class="form-label">City</label>
+            <input type="text" class="form-control" id="account-city" placeholder="City" required>
+            <div class="invalid-feedback">
+              Please provide a City
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="account-state" class="form-label">State</label>
+            <input type="text" class="form-control" id="account-state" placeholder="State" required>
+            <div class="invalid-feedback">
+              Please provide a state
+            </div>
+          </div>
+          <div class="col-md-12">
+            <label for="account-zip" class="form-label">Zip code</label>
+            <input type="text" class="form-control" id="account-zip" placeholder="Zip code" required>
+            <div class="invalid-feedback">
+              Please provide a zip code
+            </div>
+          </div>
+          <div class="col-12" style="text-align: right">
+            <button class="btn btn-primary" type="submit">Save</button>
+          </div>
+        </form>
+    </div>
+    <div class="col-md-6">
+        <div class="row">
+            <div class="col-md-12">
+                <h3>Contact list</h3>
+            </div>
+        </div>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th class="col-lg-8 col-md-8">
+                        @Html.DisplayNameFor(model => model.Name)
+                    </th>
+                    <th class="col-lg-3 col-md-3">
+                        @Html.DisplayNameFor(model => model.Phone)
+                    </th>
+                    <th class="col-lg-1 col-md-1">
+                    </th>
+                </tr>
+            </thead>
+            <tbody id="contacts-table"></tbody>
+        </table>
+    </div>
+</div>
+
+<div>
+    @Html.ActionLink("Back to list", "Index")
+</div>
+
+@section Scripts {
+ <script>
+    (function() {
+      'use strict';
+      window.addEventListener('load', function() {
+        var forms = document.getElementsByClassName('needs-validation');
+        var validation = Array.prototype.filter.call(forms, function(form) {
+          form.addEventListener('submit', function(event) {
+              if (form.checkValidity() === false) {
+                  event.preventDefault();
+                  event.stopPropagation();
+              }
+              else {
+                  event.preventDefault();
+                  $.ajax({
+                      type: "PUT",
+                      url: "/api/Account/" + @Id,
+                      data: JSON.stringify({ 
+                          name: $("#account-name").val(), 
+                          phone: $("#account-phone").val(), 
+                          street: $("#account-street").val(), 
+                          city: $("#account-city").val(), 
+                          state: $("#account-state").val(), 
+                          zip: $("#account-zip").val() }),
+                      contentType:"application/json; charset=utf-8",
+                      success: function( data ) {  
+                          document.location.pathname = "/Accounts";
+                      },
+                      error: function(error) {   
+                          console.log(error);
+                          alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                          event.stopPropagation();
+                      },
+                      dataType: 'json'
+                    });
+              }
+              form.classList.add('was-validated');
+
+          }, false);
+        });
+      }, false);
+    })();
+    $(document).ready(function() {
+        $.get("/api/Account/" + @Id, function(data) {
+            console.log(data);
+            if (data) {
+                $("#account-name").val(data.name.trim());
+                $("#account-phone").val(data.phone.trim());
+                $("#account-street").val(data.street.trim());
+                $("#account-city").val(data.city.trim());
+                $("#account-state").val(data.state.trim());
+                $("#account-zip").val(data.zip.trim());
+                if (data.contact) {
+                    for (i = 0; i < data.contact.length; i++) { 
+                        $("#contacts-table").append(
+                            '<tr id="contact-' + data.contact[i].contactId + '"><td class="col-lg-8 col-md-8">' + data.contact[i].name +
+                            '</td><td class="col-lg-3 col-md-3">' + data.contact[i].phone +
+                            '</td><td class="col-lg-1 col-md-1"><div style="text-align: right; display: flex;"><input type="button" style="margin-right: 5px;" onClick="editContact(' + data.contact[i].contactId + ')" value="Details" class="btn btn-light" /><input type="button" onClick="deleteContact(' + data.contact[i].contactId + ')" value="Delete" class="btn btn-danger" /></div></td></tr>');
+                    }
+                }
+            }
+        });
+
+    });
+    const editContact = (id) => {
+        document.location.href = "/Accounts/EditContact/" + id;
+    }
+    const deleteContact = (id) => {
+        let willDelete = confirm("Are you sure to execute this action?");
+        if (willDelete)
+            $.ajax({
+                url: '/api/Account/' + id + '/Contact',
+                type: 'DELETE',
+                success: function(result) {
+                    $("#contact-" + id).remove();
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "This Contact can not be deleted");
+                }
+            });
+    }
+</script>
+}
