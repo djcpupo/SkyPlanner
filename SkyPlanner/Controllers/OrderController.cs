@@ -106,7 +106,7 @@ namespace SkyPlanner.Controllers
                 if(!request.OrderLineItem.Any())
                     return BadRequest("You must add at least one product to the order.");
                 var subtotal = request.OrderLineItem.Sum(li => li.Quantity * li.UnitPrice);
-                var tax = subtotal * 7 / 100;
+                decimal tax = decimal.Round((subtotal * (decimal)0.07), 2);
                 var total = subtotal + tax;
                 if (subtotal != request.Subtotal || tax != request.Tax || total != request.Total)
                     return BadRequest("Please correct your order Subtotal, Taxes or Total amount.");

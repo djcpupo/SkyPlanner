@@ -1,71 +1,125 @@
 ﻿@model IEnumerable<SkyPlanner.Entities.Order>
 
 @{
-    ViewData["Title"] = "Orders";
+    ViewData["Title"] = "Order";
+    ViewData["PluralTitle"] = "Orders";
+    ViewData["Icon"] = "/Content/icons/standard-sprite/svg/symbols.svg#account";
+    ViewData["Description"] = "Order List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section GlobalActions {
+    <button class="slds-button slds-button_neutral" onclick="document.location.href = '/Orders/Create'">New</button>
+}
 
-<h1>Order List</h1>
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-orders" title="Order">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#orders"></use>
+          </svg>
+          <span class="slds-assistive-text">Order</span>
+    </span>
+}
 
-<p>
-    @Html.ActionLink("New Order", "Create", "Orders", null, new {@class = "btn btn-success" })
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th class="col-lg-2 col-md-2">
-                @Html.DisplayNameFor(model => model.CreatedDate)
-            </th>
-            <th class="col-lg-4 col-md-3">
-                @Html.DisplayNameFor(model => model.Account)
-            </th>
-            <th class="col-lg-2 col-md-2">
-                @Html.DisplayNameFor(model => model.Subtotal)
-            </th>
-            <th class="col-lg-2 col-md-2">
-                @Html.DisplayNameFor(model => model.Tax)
-            </th>
-            <th class="col-lg-2 col-md-2">
-                @Html.DisplayNameFor(model => model.Total)
-            </th>
-            <th class="col-lg-1 col-md-1"></th>
+@section Table {
+    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="Order list">
+      <thead>
+        <tr class="slds-line-height_reset">
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Created Date">Created Date</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Account">Account</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Subtotal">Subtotal</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Tax">Tax</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Total">Total</div>
+          </th>
+          <th class="slds-cell_action-mode" scope="col" style="width:3.25rem">
+            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+          </th>
         </tr>
-    </thead>
-    <tbody id="orders-table">
-    </tbody>
-</table>
-@section Scripts { 
-<script>         
-    const deleteOrder = (id) => {
-        console.log(id);
-        let willDelete = confirm("Are you sure to execute this action?");
-        if (willDelete)
-            $.ajax({
-                url: '/api/Order/' + id,
-                type: 'DELETE',
-                success: function(result) {
-                    $("#order-" + id).remove();
-                },
-                error: function(error) {
-                    alert(error && error.responseJSON ? error.responseJSON : "This Product can not be deleted");
+      </thead>
+      <tbody id="orders-table">
+      </tbody>
+    </table>
+    <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light " role="status" id="order-notification">
+      <div class="slds-media__figure">
+        <span class="slds-icon_container slds-icon-utility-info" title="information">
+          <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+            <use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#info"></use>
+          </svg>
+          <span class="slds-assistive-text">information</span>
+        </span>
+      </div>
+      <div class="slds-media__body">
+        <p>There is no orders created.
+          <a href="/Orders/Create">Create one</a>
+        </p>
+      </div>
+    </div>
+}
+
+@section Scripts {
+    <script>    
+        const deleteRecord = (id) => {
+            let willDelete = confirm("Are you sure to execute this action?");
+            if (willDelete)
+                $.ajax({
+                    url: '/api/Order/' + id,
+                    type: 'DELETE',
+                    success: function(result) {
+                        $("#account-" + id).remove();
+                        $.get("/api/Order", function(data) {
+                            if (data.length == 0)
+                                $('#order-notification').removeClass('hidden');
+                        });
+                    },
+                    error: function(error) {
+                        alert(error && error.responseJSON ? error.responseJSON : "This Order can not be deleted");
+                    }
+                });
+        };
+        $(document).ready(function() {
+            $.get("/api/Order", function(data) {
+                if (data.length > 0)
+                    $('#order-notification').addClass('hidden');
+                for (i = 0; i < data.length; i++) { 
+                    $("#orders-table").append(
+                        '<tr id="account-' + data[i].orderId + '" class="slds-hint-parent">' +
+                          '<th data-label="Date Created" scope="row">' +
+                            '<div class="slds-truncate" title="' + new Date(data[i].createdDate).toLocaleDateString() + '">' +
+                              '<a href="/Orders/Detail/' + data[i].orderId + '" tabindex="-1">' + new Date(data[i].createdDate).toLocaleDateString() + '</a>' +
+                            '</div>' +
+                          '</th>' +
+                          '<td data-label="Phone">' +
+                            '<div class="slds-truncate" title="' + data[i].account.name + '">' + data[i].account.name + '</div>' +
+                          '</td>' +
+                          '<td data-label="Street">' +
+                            '<div class="slds-truncate" title="' + data[i].subtotal + '">' + data[i].subtotal + '</div>' +
+                          '</td>' +
+                          '<td data-label="City">' +
+                            '<div class="slds-truncate" title="' + data[i].tax + '">' + data[i].tax + '</div>' +
+                          '</td>' +
+                          '<td data-label="State">' +
+                            '<div class="slds-truncate" title="' + data[i].total + '">' + data[i].total + '</div>' +
+                          '</td>' +
+                          '<td class="slds-cell_action-mode" role="gridcell">' +
+                             '<button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" tabindex="0" title="Delete" onclick="deleteRecord(' + data[i].orderId + ')">' +
+                                '<svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">' +
+                                   '<use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#delete"></use>' +
+                                '</svg>' +
+                                '<span class="slds-assistive-text">Delete</span>' +
+                             '</button>' +
+                          '</td>' +
+                        '</tr>');
                 }
             });
-    }
-    const detail = (id) => {
-        document.location.href = "/Orders/Detail/" + id;
-    }
-    $(document).ready(function() {
-        $.get("/api/Order", function(data) {
-            for (i = 0; i < data.length; i++)
-                $("#orders-table").append(
-                    '<tr id="order-' + data[i].orderId + '"><td class="col-lg-2 col-md-2">' + new Date(data[i].createdDate).toLocaleDateString() +
-                    '</td><td class="col-lg-3 col-md-3">' + data[i].account.name +
-                    '</td><td class="col-lg-2 col-md-2">$' + data[i].subtotal +
-                    '</td><td class="col-lg-2 col-md-2">$' + data[i].tax +
-                    '</td><td class="col-lg-2 col-md-2">$' + data[i].total +
-                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><div style="text-align: right; display: flex;"><input type="button" style="margin-right: 5px;" onClick="detail(' + data[i].orderId + ')" value="Details" class="btn btn-light" /><input type="button" onClick="deleteOrder(' + data[i].orderId + ')" value="Delete" class="btn btn-danger" /></td></tr>');
-        });
 
-    });
- </script>
+        });
+     </script>
 }

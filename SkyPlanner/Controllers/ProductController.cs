@@ -96,7 +96,8 @@ namespace SkyPlanner.Controllers
                 {
                     return new BadRequestObjectResult(ModelState);
                 }
-
+                if(request.Price <= 0)
+                    return BadRequest("The Price should be grater than $0");
                 if (request.Phone.Length > 10)
                     return BadRequest("The Phone Number should be 10 digits");
                 if (request.Name.Length > 200)
@@ -114,6 +115,59 @@ namespace SkyPlanner.Controllers
                 _context.Product.Add(product);
                 _context.SaveChanges();
                 return new OkObjectResult(product);
+            }
+            catch (System.Exception)
+            {
+                return new BadRequestObjectResult("An error has occurred, please try again or contact the support team.");
+            }
+        }
+
+        /// <summary>
+        /// Edit a Product.
+        /// </summary>
+        /// <remarks>
+        /// Sample request:
+        /// 
+        ///     PUT api/Product
+        ///     {        
+        ///       "name": "Name",
+        ///       "Phone": "7863052365",
+        ///       "Price": 100
+        ///     }
+        /// </remarks>
+        /// <returns>The Product.</returns>
+        // PUT api/Product
+        [HttpPut("{id}")]
+        [Produces("application/json")]
+        public ActionResult Put([FromBody] Product request, int id)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return new BadRequestObjectResult(ModelState);
+                }
+
+                var tempProduct = _context.Product.FirstOrDefault(p => p.ProductId == id);
+                if (tempProduct == null)
+                    return NotFound("There is not Products with this ID: " + id.ToString());
+                if (request.Price <= 0)
+                    return BadRequest("The Price should be grater than $0");
+                if (request.Phone.Length > 10)
+                    return BadRequest("The Phone Number should be 10 digits");
+                if (request.Name.Length > 200)
+                    return BadRequest("The Name should be 200 or less characters");
+                var product = _context.Product.FirstOrDefault(p => p.Name.ToLower() == request.Name.ToLower() && p.ProductId != id);
+                if (product != null)
+                    return BadRequest("There is another product with this Name: " + request.Name);
+
+                tempProduct.Name = request.Name;
+                tempProduct.Phone = request.Phone;
+                tempProduct.Price = request.Price;
+
+                _context.Product.Update(tempProduct);
+                _context.SaveChanges();
+                return new OkObjectResult(tempProduct);
             }
             catch (System.Exception)
             {

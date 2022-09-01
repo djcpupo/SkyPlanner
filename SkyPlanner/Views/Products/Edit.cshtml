@@ -1,0 +1,133 @@
+﻿@model SkyPlanner.Entities.Product
+
+@{
+    ViewData["Title"] = "Product";
+    ViewData["PluralTitle"] = "Products";
+    ViewData["Description"] = "Edit Product";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    string Id = ViewBag.Id;
+}
+@*@section GlobalActions {
+    <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
+}*@
+
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-products" title="Products">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#products"></use>
+          </svg>
+          <span class="slds-assistive-text">Products</span>
+    </span>
+}
+
+<div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--6-of-12 slds-col-rule--right slds-p-around--large">
+    <fieldset class="slds-form-element slds-form-element_compound">
+        <div class="slds-form-element__control">
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-form-element" id="product-name-form-element">
+                      <label class="slds-form-element__label" for="product-name">
+                        <abbr class="slds-required" title="required">* </abbr>Name</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="product-name" placeholder="Name" required class="slds-input" />
+                      </div>
+                    </div>
+                </div>
+            </div>             
+            <div class="slds-form-element__row">
+                 <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="product-phone-form-element">
+                      <label class="slds-form-element__label" for="product-phone">
+                        <abbr class="slds-required" title="required">* </abbr>Phone</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="product-phone" placeholder="Phone" required class="slds-input" />
+                      </div>
+                    </div>
+                 </div>
+                 <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="product-price-form-element">
+                      <label class="slds-form-element__label" for="product-price">
+                        <abbr class="slds-required" title="required">* </abbr>Price</label>
+                      <div class="slds-form-element__control">
+                        <input type="number" id="product-price" placeholder="0" required class="slds-input" min="0.01" step="0.1"/>
+                      </div>
+                    </div>
+                 </div>
+            </div>
+        </div>
+    </fieldset>
+</div>
+<div class="slds-docked-form-footer">
+  <button type="button" class="slds-button slds-button_neutral" onclick="document.location.href = '/Products'">Cancel</button>
+  <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
+</div>
+
+@section Scripts {
+ <script>
+     var validations = [];
+    const save = () => {
+        if (isValid()) {
+            $.ajax({
+                type: "PUT",
+                url: "/api/Product/" + @Id,
+                data: JSON.stringify({ name: $("#product-name").val(), price: $("#product-price").val(), phone: $("#product-phone").val() }),
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    alert("Product updated");
+                    document.location.pathname = "/Products";
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                    event.stopPropagation();
+                },
+                dataType: 'json'
+            });
+        }
+    }
+    $(document).ready(function() {      
+        $.get("/api/Product/" + @Id, function(data) {
+            console.log(data);
+            if (data) {
+                $("#product-name").val(data.name.trim());
+                $("#product-phone").val(data.phone.trim());
+                $("#product-price").val(data.price);
+            }
+        });
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) { 
+            input.addEventListener('blur', function(event) { 
+                var id = event.target.id;
+                var value = event.target.value;
+                console.log($('#'+id).prop('required'));
+                var element = $('#' + id + '-form-element');
+                if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                    element.addClass('slds-has-error');
+                    validations.push({name: id, valid: false});
+                } else {
+                    element.removeClass('slds-has-error');
+                    validations = validations.filter(v=>v.id != id);
+                }
+
+            });
+        });
+    });
+
+    const isValid = () => {
+        validations = [];
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) {
+            var id = input.id;
+            var value = input.value;
+            var element = $('#' + id + '-form-element');
+            if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                element.addClass('slds-has-error');
+                validations.push({ name: id, valid: false });
+            } else {
+                element.removeClass('slds-has-error');
+            }
+        });
+        console.log(validations)
+        return validations.filter(v => !v.valid).length == 0;
+    }
+</script>
+}

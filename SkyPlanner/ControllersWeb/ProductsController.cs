@@ -29,5 +29,12 @@ namespace SkyPlanner.Controllers
         {
             return View();
         }
+
+        // GET: Products/Edit
+        public IActionResult Edit(string Id)
+        {
+            ViewBag.Id = Id;
+            return View();
+        }
     }
 }

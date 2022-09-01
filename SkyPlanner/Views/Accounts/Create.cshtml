@@ -1,109 +1,163 @@
 ﻿@model SkyPlanner.Entities.Account
 
 @{
-    ViewData["Title"] = "Create Account";
+    ViewData["Title"] = "Account";
+    ViewData["PluralTitle"] = "Accounts";
+    ViewData["Icon"] = "/Content/icons/standard-sprite/svg/symbols.svg#account";
+    ViewData["Description"] = "New Account";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@*@section GlobalActions {
+    <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
+}*@
 
-<h1>Create Account</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form class="row g-3 needs-validation" novalidate>
-          <div class="col-md-12">
-            <label for="account-name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="account-name" placeholder="Name" required>
-            <div class="invalid-feedback">
-              Enter the account name
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-account" title="Account">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#account"></use>
+          </svg>
+          <span class="slds-assistive-text">Account</span>
+    </span>
+}
+
+<div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--6-of-12 slds-col-rule--right slds-p-around--large">
+    <fieldset class="slds-form-element slds-form-element_compound">
+        <div class="slds-form-element__control">
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-form-element" id="account-name-form-element">
+                      <label class="slds-form-element__label" for="account-name">
+                        <abbr class="slds-required" title="required">* </abbr>Name</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-name" placeholder="Name" required class="slds-input" />
+                      </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-form-element" id="account-street-form-element">
+                      <label class="slds-form-element__label" for="account-street">
+                        <abbr class="slds-required" title="required">* </abbr>Street</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-street" placeholder="Street" required class="slds-input" />
+                      </div>
+                    </div>
+                  </div>
             </div>
-          </div>
-          <div class="col-md-12">
-            <label for="account-phone" class="form-label">Phone</label>
-            <input type="tel" class="form-control" id="account-phone" placeholder="Phone" required>
-            <div class="invalid-feedback">
-              Please provide a phone
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="account-city-form-element">
+                      <label class="slds-form-element__label" for="account-city">
+                        <abbr class="slds-required" title="required">* </abbr>City</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-city" placeholder="City" required class="slds-input" />
+                      </div>
+                    </div>
+                 </div>
+                 <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="account-state-form-element">
+                      <label class="slds-form-element__label" for="account-state">
+                        <abbr class="slds-required" title="required">* </abbr>State</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-state" placeholder="State" required class="slds-input" />
+                      </div>
+                    </div>
+                 </div>
             </div>
-          </div>
-          <div class="col-md-12">
-            <label for="account-street" class="form-label">Street</label>
-            <input type="text" class="form-control" id="account-street" placeholder="Street" required>
-            <div class="invalid-feedback">
-              Please provide a valid street
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="account-zip-form-element">
+                      <label class="slds-form-element__label" for="account-zip">
+                        <abbr class="slds-required" title="required">* </abbr>Zip</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-zip" placeholder="Zip" required class="slds-input" />
+                      </div>
+                    </div>
+                 </div>
+                 <div class="slds-size_1-of-2">
+                    <div class="slds-form-element" id="account-phone-form-element">
+                      <label class="slds-form-element__label" for="account-phone">
+                        <abbr class="slds-required" title="required">* </abbr>Phone</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="account-phone" placeholder="Phone" required class="slds-input" />
+                      </div>
+                    </div>
+                 </div>
             </div>
-          </div>
-          <div class="col-md-12">
-            <label for="account-city" class="form-label">City</label>
-            <input type="text" class="form-control" id="account-city" placeholder="City" required>
-            <div class="invalid-feedback">
-              Please provide a City
-            </div>
-          </div>
-          <div class="col-md-12">
-            <label for="account-state" class="form-label">State</label>
-            <input type="text" class="form-control" id="account-state" placeholder="State" required>
-            <div class="invalid-feedback">
-              Please provide a state
-            </div>
-          </div>
-          <div class="col-md-12">
-            <label for="account-zip" class="form-label">Zip code</label>
-            <input type="text" class="form-control" id="account-zip" placeholder="Zip code" required>
-            <div class="invalid-feedback">
-              Please provide a zip code
-            </div>
-          </div>
-          <div class="col-12" style="text-align: right">
-            <button class="btn btn-primary" type="submit">Create</button>
-          </div>
-        </form>
-    </div>
+        </div>
+    </fieldset>
 </div>
-
-<div>
-    @Html.ActionLink("Back to list", "Index")
+<div class="slds-docked-form-footer">
+  <button type="button" class="slds-button slds-button_neutral" onclick="document.location.href = '/Accounts'">Cancel</button>
+  <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
 </div>
 
 @section Scripts {
  <script>
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                  event.preventDefault();
-                  event.stopPropagation();
-              }
-              else {
-                  event.preventDefault();
-                  $.ajax({
-                      type: "POST",
-                      url: "/api/Account",
-                      data: JSON.stringify({ 
-                          name: $("#account-name").val(), 
-                          phone: $("#account-phone").val(), 
-                          street: $("#account-street").val(), 
-                          city: $("#account-city").val(), 
-                          state: $("#account-state").val(), 
-                          zip: $("#account-zip").val() }),
-                      contentType:"application/json; charset=utf-8",
-                      success: function( data ) {  
-                          console.log(data);
-                          document.location.pathname = "/Accounts/Edit/" + data.accountId;
-                      },
-                      error: function(error) {     
-                          alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
-                          event.stopPropagation();
-                      },
-                      dataType: 'json'
-                    });
-              }
-              form.classList.add('was-validated');
+    var validations = [];
+    const save = () => {
+        if (isValid()) {
+            $.ajax({
+                type: "POST",
+                url: "/api/Account",
+                data: JSON.stringify({
+                    name: $("#account-name").val(),
+                    phone: $("#account-phone").val(),
+                    street: $("#account-street").val(),
+                    city: $("#account-city").val(),
+                    state: $("#account-state").val(),
+                    zip: $("#account-zip").val()
+                }),
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    alert("Account created");
+                    document.location.pathname = "/Accounts/Edit/" + data.accountId;
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                    event.stopPropagation();
+                },
+                dataType: 'json'
+            });
+        }
+    }
+    $(document).ready(function() {
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) { 
+            input.addEventListener('blur', function(event) { 
+                var id = event.target.id;
+                var value = event.target.value;
+                console.log($('#'+id).prop('required'));
+                var element = $('#' + id + '-form-element');
+                if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                    element.addClass('slds-has-error');
+                    validations.push({name: id, valid: false});
+                } else {
+                    element.removeClass('slds-has-error');
+                    validations = validations.filter(v=>v.id != id);
+                }
 
-          }, false);
+            });
         });
-      }, false);
-    })();
+    });
+
+    const isValid = () => {
+        validations = [];
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) {
+            var id = input.id;
+            var value = input.value;
+            var element = $('#' + id + '-form-element');
+            if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                element.addClass('slds-has-error');
+                validations.push({ name: id, valid: false });
+            } else {
+                element.removeClass('slds-has-error');
+            }
+        });
+        console.log(validations)
+        return validations.filter(v => !v.valid).length == 0;
+    }
 </script>
 }
