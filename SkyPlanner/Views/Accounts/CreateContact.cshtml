@@ -1,79 +1,120 @@
 ﻿@model SkyPlanner.Entities.Account
 
 @{
-    ViewData["Title"] = "Create Contact";
+    ViewData["Title"] = "Contact";
+    ViewData["PluralTitle"] = "Contacts";
+    ViewData["Icon"] = "/Content/icons/standard-sprite/svg/symbols.svg#contact";
+    ViewData["Description"] = "New Contact";
     Layout = "~/Views/Shared/_Layout.cshtml";
     string Id = ViewBag.Id;
 }
+@*@section GlobalActions {
+    <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
+}*@
 
-<h1>Create Contact</h1>
-<hr />
-<div class="row">
-    <div class="col-md-6">
-        <form class="row g-3 needs-validation" novalidate>
-          <div class="col-md-12">
-            <label for="contact-name" class="form-label">Name</label>
-            <input type="text" class="form-control" id="contact-name" placeholder="Name" required>
-            <div class="invalid-feedback">
-              Enter the contact name
-            </div>
-          </div>
-          <div class="col-md-12">
-            <label for="contact-phone" class="form-label">Phone</label>
-            <input type="tel" class="form-control" id="contact-phone" placeholder="Phone" required>
-            <div class="invalid-feedback">
-              Please provide a phone
-            </div>
-          </div>
-          <div class="col-12" style="text-align: right">
-            <button class="btn btn-primary" type="submit">Create</button>
-          </div>
-        </form>
-    </div>
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-contact" title="Contact">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#contact"></use>
+          </svg>
+          <span class="slds-assistive-text">Contact</span>
+    </span>
+}
+
+<div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--6-of-12 slds-col-rule--right slds-p-around--large">
+    <fieldset class="slds-form-element slds-form-element_compound">
+        <div class="slds-form-element__control">
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-form-element" id="contact-name-form-element">
+                      <label class="slds-form-element__label" for="contact-name">
+                        <abbr class="slds-required" title="required">* </abbr>Name</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="contact-name" placeholder="Name" required class="slds-input" />
+                      </div>
+                    </div>
+                </div>
+            </div> 
+            <div class="slds-form-element__row">
+                <div class="slds-size_1-of-1">
+                    <div class="slds-form-element" id="contact-phone-form-element">
+                      <label class="slds-form-element__label" for="contact-phone">
+                        <abbr class="slds-required" title="required">* </abbr>Phone</label>
+                      <div class="slds-form-element__control">
+                        <input type="text" id="contact-phone" placeholder="Phone" required class="slds-input" />
+                      </div>
+                    </div>
+                  </div>
+            </div>            
+        </div>
+    </fieldset>
 </div>
-
-<div>
-    @Html.ActionLink("Back to details", "Edit", "Accounts", new {@id = Id})
+<div class="slds-docked-form-footer">
+  <button type="button" class="slds-button slds-button_neutral" onclick="document.location.href = '/Accounts/Edit/@Id'">Cancel</button>
+  <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
 </div>
 
 @section Scripts {
  <script>
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-              if (form.checkValidity() === false) {
-                  event.preventDefault();
-                  event.stopPropagation();
-              }
-              else {
-                  event.preventDefault();
-                  $.ajax({
-                      type: "POST",
-                      url: "/api/Account/" + @Id + "/Contact",
-                      data: JSON.stringify({ 
-                          name: $("#contact-name").val(), 
-                          phone: $("#contact-phone").val(),
-                          accountId: @Id
+    var validations = [];
+    const save = () => {
+        if (isValid()) {
+            $.ajax({
+                type: "POST",
+                url: "/api/Account/" + @Id + "/Contact",
+                data: JSON.stringify({
+                    name: $("#contact-name").val(),
+                    phone: $("#contact-phone").val(),
+                    accountId: @Id
                       }),
-                      contentType:"application/json; charset=utf-8",
-                      success: function( data ) {  
-                          document.location.pathname = "/Accounts/Edit/" + @Id;
-                      },
-                      error: function(error) {     
-                          alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
-                          event.stopPropagation();
-                      },
-                      dataType: 'json'
-                    });
-              }
-              form.classList.add('was-validated');
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    alert("Contact created");
+                    document.location.pathname = "/Accounts/Edit/" + @Id;
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                    event.stopPropagation();
+                },
+                dataType: 'json'
+            });
+        }
+    }
+    $(document).ready(function() {
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) { 
+            input.addEventListener('blur', function(event) { 
+                var id = event.target.id;
+                var value = event.target.value;
+                console.log($('#'+id).prop('required'));
+                var element = $('#' + id + '-form-element');
+                if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                    element.addClass('slds-has-error');
+                    validations.push({name: id, valid: false});
+                } else {
+                    element.removeClass('slds-has-error');
+                    validations = validations.filter(v=>v.id != id);
+                }
 
-          }, false);
+            });
         });
-      }, false);
-    })();
+    });
+    const isValid = () => {
+        validations = [];
+        var inputs = document.getElementsByClassName('slds-input');
+        Array.prototype.filter.call(inputs, function(input) {
+            var id = input.id;
+            var value = input.value;
+            var element = $('#' + id + '-form-element');
+            if ($('#' + id).prop('required') && (value == '' || value.trim() == '')) {
+                element.addClass('slds-has-error');
+                validations.push({ name: id, valid: false });
+            } else {
+                element.removeClass('slds-has-error');
+            }
+        });
+        console.log(validations)
+        return validations.filter(v => !v.valid).length == 0;
+    }
 </script>
 }

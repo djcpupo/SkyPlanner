@@ -1,36 +1,66 @@
 ﻿@model IEnumerable<SkyPlanner.Entities.Product>
 
 @{
-    ViewData["Title"] = "Products";
+    ViewData["Title"] = "Product";
+    ViewData["PluralTitle"] = "Products";
+    ViewData["Icon"] = "/Content/icons/standard-sprite/svg/symbols.svg#products";
+    ViewData["Description"] = "Product List";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
+@section GlobalActions {
+    <button class="slds-button slds-button_neutral" onclick="document.location.href = '/Products/Create'">New</button>
+}
 
-<h1>Product List</h1>
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-products" title="Products">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#products"></use>
+          </svg>
+          <span class="slds-assistive-text">Products</span>
+    </span>
+}
 
-<p>
-    @Html.ActionLink("New Product", "Create", "Products", null, new {@class = "btn btn-success" })
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th class="col-lg-6 col-md-6">
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th class="col-lg-2 col-md-2">
-                @Html.DisplayNameFor(model => model.Price)
-            </th>
-            <th class="col-lg-3 col-md-3">
-                @Html.DisplayNameFor(model => model.Phone)
-            </th>
-            <th class="col-lg-1 col-md-1"></th>
+@section Table {
+    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="Product list">
+      <thead>
+        <tr class="slds-line-height_reset">
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Name">Name</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Phone">Phone</div>
+          </th>
+          <th class="" scope="col">
+            <div class="slds-truncate" title="Price">Price</div>
+          </th>
+          <th class="slds-cell_action-mode" scope="col" style="width:3.25rem">
+            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+          </th>
         </tr>
-    </thead>
-    <tbody id="products-table"></tbody>
-</table>
+      </thead>
+      <tbody id="products-table">
+      </tbody>
+    </table>
+    <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light " role="status" id="product-notification">
+      <div class="slds-media__figure">
+        <span class="slds-icon_container slds-icon-utility-info" title="information">
+          <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+            <use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#info"></use>
+          </svg>
+          <span class="slds-assistive-text">information</span>
+        </span>
+      </div>
+      <div class="slds-media__body">
+        <p>There is no products created.
+          <a href="/Products/Create">Create one</a>
+        </p>
+      </div>
+    </div>
+}
 
 @section Scripts { 
 <script>         
-    const deleteProduct = (id) => {
+    const deleteRecord = (id) => {
         let willDelete = confirm("Are you sure to execute this action?");
         if (willDelete)
             $.ajax({
@@ -38,19 +68,44 @@
                 type: 'DELETE',
                 success: function(result) {
                     $("#product-" + id).remove();
+                    $.get("/api/Product", function(data) {
+                        if (data.length == 0)
+                            $('#product-notification').removeClass('hidden');
+                    });
                 },
                 error: function(error) {
                     alert(error && error.responseJSON ? error.responseJSON : "This Product can not be deleted");
                 }
             });
-    }
+    };
     $(document).ready(function() {
         $.get("/api/Product", function(data) {
-            for (i = 0; i < data.length; i++)
-                $("#products-table").append('<tr id="product-' + data[i].productId + '"><td class="col-lg-6 col-md-6">' + data[i].name +
-                    '</td><td class="col-lg-2 col-md-2">' + data[i].price +
-                    '</td><td class="col-lg-3 col-md-3">' + data[i].phone +
-                    '</td><td class="col-lg-1 col-md-1" style="text-align: right"><input type="button" onClick="deleteProduct(' + data[i].productId + ')" value="Delete" class="btn btn-danger" /></td></tr>');
+            for (i = 0; i < data.length; i++) {
+                if (data.length > 0)
+                    $('#product-notification').addClass('hidden');
+                $("#products-table").append(
+                    '<tr id="product-' + data[i].productId + '" class="slds-hint-parent">' +
+                    '<th data-label="Name" scope="row">' +
+                    '<div class="slds-truncate" title="' + data[i].name + '">' +
+                    '<a href="/Products/Edit/' + data[i].productId + '" tabindex="-1">' + data[i].name + '</a>' +
+                    '</div>' +
+                    '</th>' +
+                    '<td data-label="Phone">' +
+                    '<div class="slds-truncate" title="' + data[i].phone + '">' + data[i].phone + '</div>' +
+                    '</td>' +
+                    '<td data-label="Price">' +
+                    '<div class="slds-truncate" title="' + data[i].price + '">$' + data[i].price + '</div>' +
+                    '</td>' +
+                    '<td class="slds-cell_action-mode" role="gridcell">' +
+                    '<button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" tabindex="0" title="Delete" onclick="deleteRecord(' + data[i].productId + ')">' +
+                    '<svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">' +
+                    '<use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#delete"></use>' +
+                    '</svg>' +
+                    '<span class="slds-assistive-text">Delete</span>' +
+                    '</button>' +
+                    '</td>' +
+                    '</tr>');
+            }
         });
 
     });

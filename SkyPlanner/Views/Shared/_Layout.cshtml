@@ -4,46 +4,87 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>@ViewData["Title"] - SkyPlanner</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-    <link rel="stylesheet" href="//code.jquery.com/ui/1.13.2/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/design-system/2.19.0/styles/salesforce-lightning-design-system.min.css" integrity="sha512-p9SCOMLK1HdDw85Sxg6PaduBc1ZYvsBXWly04TfTby25K+tNjm/oRpxbNNWDBcbbx8Ub5OfZQHHsYjzuxCcjGA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="~/Content/css/site.css">
     @RenderSection("Head", false)
 </head>
 <body>
-    <header>
-        <nav class="navbar navbar-expand-lg navbar-dark  bg-primary">
-          <div class="container-fluid">
-            <a class="navbar-brand" asp-area="" href="/Orders">SkyPlanner</a>
-            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-              <span class="navbar-toggler-icon"></span>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-              <ul class="navbar-nav">
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/Orders">Orders</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/Products">Products</a>
-                </li>
-                <li class="nav-item">
-                  <a class="nav-link active" aria-current="page" href="/Accounts">Accounts</a>
-                </li>
-              </ul>
+    <div class="slds-context-bar">
+        <div class="slds-context-bar__primary">
+            <div class="slds-context-bar__item slds-context-bar__dropdown-trigger slds-dropdown-trigger slds-dropdown-trigger_click slds-no-hover">
+              <div class="slds-context-bar__icon-action">
+                <button class="slds-button slds-icon-waffle_container slds-context-bar__button" title="SkyPlanner">
+                  <span class="slds-icon-waffle">
+                    <span class="slds-r1"></span>
+                    <span class="slds-r2"></span>
+                    <span class="slds-r3"></span>
+                    <span class="slds-r4"></span>
+                    <span class="slds-r5"></span>
+                    <span class="slds-r6"></span>
+                    <span class="slds-r7"></span>
+                    <span class="slds-r8"></span>
+                    <span class="slds-r9"></span>
+                  </span>
+                  <span class="slds-assistive-text">Open App Launcher</span>
+                </button>
+              </div>
+              <span class="slds-context-bar__label-action slds-context-bar__app-name">
+                <span class="slds-truncate" title="SkyPlanner">SkyPlanner</span>
+              </span>
             </div>
-          </div>
-        </nav>
-    </header>
-    <div class="container">
-        <main role="main" class="pb-3 pt-3">
-            @RenderBody()
-        </main>
+        </div>
+        <nav class="slds-context-bar__secondary" role="navigation">
+            <ul class="slds-grid">          
+              <li class="slds-context-bar__item" id="menu-item-orders">
+                <a href="/Orders" class="slds-context-bar__label-action" title="Orders">
+                  <span class="slds-truncate" title="Orders">Orders</span>
+                </a>
+              </li>
+              <li class="slds-context-bar__item" id="menu-item-products">
+                <a href="/Products" class="slds-context-bar__label-action" title="Products">
+                  <span class="slds-truncate" title="Products">Products</span>
+                </a>
+              </li>
+              <li class="slds-context-bar__item" id="menu-item-accounts">
+                <a href="/Accounts" class="slds-context-bar__label-action" title="Accounts">
+                  <span class="slds-truncate" title="Accounts">Accounts</span>
+                </a>
+              </li>
+            </ul>
+         </nav>
     </div>
-    
-    <script src="~/Content/js/site.js"></script>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script src="https://code.jquery.com/ui/1.13.2/jquery-ui.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
-
+    <article class="slds-card">
+  <div class="slds-card__header slds-grid">
+    <header class="slds-media slds-media_center slds-has-flexi-truncate">
+      <div class="slds-media__figure">
+        @RenderSection("SectionIcon", false) 
+      </div>
+      <div class="slds-media__body">
+        <h2 class="slds-card__header-title">
+          <a href="#" class="slds-card__header-link slds-truncate" title="@ViewData["PluralTitle"]">
+            <span>@ViewData["PluralTitle"]</span>
+          </a>
+        </h2>
+      </div>
+      <div class="slds-no-flex">
+          @RenderSection("GlobalActions", false)        
+      </div>
+    </header>
+  </div>
+  <div class="slds-card__body slds-card__body_inner">@ViewData["Description"]</div>
+  @RenderSection("Table", false)   
+</article>
+    @RenderBody()
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.6.1/jquery.min.js" integrity="sha512-aVKKRRi/Q/YV+4mjoKBsE4x3H+BkegoM/em46NNlCqNTmUYADjBbeNefNxYV7giUp0VxICtqdrbqU7iVaeZNXA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-ajaxy/1.6.1/scripts/jquery.ajaxy.min.js" integrity="sha512-bztGAvCE/3+a1Oh0gUro7BHukf6v7zpzrAb3ReWAVrt+bVNNphcl2tDTKCBr5zk7iEDmQ2Bv401fX3jeVXGIcA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     @RenderSection("Scripts", false)
+    <script>
+        function setActive() {
+            var routes = document.location.pathname.split('/').filter(p => p != '');
+            var active = routes[0];
+            $('#menu-item-' + active.toLocaleLowerCase()).addClass('slds-is-active')
+        }
+        setActive();
+    </script>
 </body>
 </html>

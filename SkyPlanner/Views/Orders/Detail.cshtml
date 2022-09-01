@@ -2,49 +2,65 @@
 
 @{
     ViewData["Title"] = "Order";
+    ViewData["PluralTitle"] = "Orders";
+    ViewData["Icon"] = "/Content/icons/standard-sprite/svg/symbols.svg#account";
+    ViewData["Description"] = "Order Detail";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int OrderId = ViewBag.OrderId;
 }
 
-<h1>Order</h1>
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-orders" title="Order">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#orders"></use>
+          </svg>
+          <span class="slds-assistive-text">Order</span>
+    </span>
+}
 
-<hr />
-<div class="row">    
-    <div class="col-md-12">
-        <div class="form-group">
-            <label for="autocomplete-account" class="text-bold">Account</label>
-            <input type="text" class="form-control" placeholder="Account" id="autocomplete-account">            
+@section Table {
+    <div class="slds-card__header slds-grid">
+        <div class="slds-form-element slds-size--1-of-2">
+          <label class="slds-form-element__label" for="autocomplete-account">Account</label>
+          <div class="slds-form-element__control">
+            <input type="text" id="autocomplete-account" placeholder="" disabled="" class="slds-input" />
+          </div>
         </div>
-        <form class="row g-3 needs-validation" novalidate>
-            <div class="col-md-12 scrollable-55" id="order-form">
-                <div class="row text-bold" style="padding: 8px 0 8px 0; border-bottom: 1px solid;">
-                    <div class="col-md-4">Name</div>
-                    <div class="col-md-2 price-container">Quantity</div>
-                    <div class="col-md-3 price-container">Unit Price</div>
-                    <div class="col-md-3 price-container">Subtotal</div>
-                </div>
-              
-            </div>
-            
-            <div class="row price-container">
-                <div class="col-md-9">Subtotal:</div>
-                <div class="col-md-3" id="subtotal-text">$0</div>
-            </div>
-            <div class="row price-container">
-                <div class="col-md-9">Taxes(7%):</div>
-                <div class="col-md-3" id="taxes-text">$0</div>
-            </div>
-            <div class="row price-container text-bold fs-xlarge">
-                <div class="col-md-9">Total:</div>
-                <div class="col-md-3" id="total-text">$0</div>
-            </div>
-        </form>
     </div>
-</div>
-
-<div>
-    @Html.ActionLink("Back to list", "Index")
-</div>
+    <div class="slds-card__header slds-grid">
+        <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered slds-size--1-of-1" aria-label="Order list">
+          <thead>
+            <tr class="slds-line-height_reset">
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Name">Name</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Quantity">Quantity</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Unit Price">Unit Price</div>
+              </th>
+              <th class="" scope="col">
+                <div class="slds-truncate" title="Subtotal">Subtotal</div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="items-table">
+          </tbody>
+        </table>
+    </div>
+    <div class="slds-card__header slds-grid">
+        <div class="slds-grow slds-size--3-of-4 slds-col-rule--right slds-p-around--large"></div>
+        <div class="slds-grow slds-size--1-of-4 slds-col-rule--right slds-p-around--large slds-text-align_right">
+            <div class="slds-truncate slds-text-heading_medium" title="Subtotal" id="subtotal-text">Subtotal:</div>
+            <br />
+            <div class="slds-truncate slds-text-heading_medium" title="Taxes(7%)" id="taxes-text">Taxes(7%):</div>
+            <br />
+            <div class="slds-truncate slds-text-heading_medium" title="Total" id="total-text">Total:</div>
+        </div>
+    </div>
+    
+}
 
 @section Scripts {
  <script>
@@ -55,28 +71,30 @@
             order = data;
             if (data) {
                 $('#autocomplete-account').val(order.account.name);
-                $('#autocomplete-account').attr('readonly', 'readonly');
-                $("#subtotal-text").text(order.subtotal.toString());
-                $("#taxes-text").text(order.tax.toString());
-                $("#total-text").text(order.total.toString());
+                $("#subtotal-text").text('Subtotal: $' + order.subtotal.toString());
+                $("#taxes-text").text('Taxes(7%): $' + order.tax.toString());
+                $("#total-text").text('Total: $' + order.total.toString());
                 for (i = 0; i < order.orderLineItem.length; i++)
                     addProduct(order.orderLineItem[i].productId, order.orderLineItem[i].product.name, order.orderLineItem[i].unitPrice, order.orderLineItem[i].quantity);
             }
         });
     });
     const addProduct = (id, name, price, quantity) => {   
-        $("#order-form").append(
-               '<div class="row order-item" id="order-item-'+ id +'">' + 
-                    '<input style="display:none" id="product-id-' + id + '" value="' + id + '">' + 
-                    '<input style="display:none" id="product-name-' + id + '" value="' + name + '">' + 
-                    '<input style="display:none" id="product-price-' + id + '" value="' + price + '">' + 
-                    '<div class="col-md-4 flex-column">' + name + '</div>' + 
-                    '<div class="col-md-2 flex-column price-container">' + quantity + '</div>' +                     
-                    '<div class="col-md-3 flex-column price-container">$' + price + '</div>' + 
-                    '<div class="col-md-3 flex-column price-container" id="product-subtotal-' + id + '">$'+ (price * quantity) +'</div>' + 
-                '</div>'
-        );
-
+        $("#items-table").append(
+            '<tr id="item-' + id + '" class="slds-hint-parent">' +
+            '<th data-label="Name" scope="row">' +
+            '<div class="slds-truncate" title="' + name + '">' + name + '</div>' +
+            '</th>' +
+            '<td data-label="Quantity">' +
+            '<div class="slds-truncate" title="' + quantity + '">' + quantity + '</div>' +
+            '</td>' +
+            '<td data-label="Unit Price">' +
+            '<div class="slds-truncate" title="' + price + '">' + price + '</div>' +
+            '</td>' +
+            '<td data-label="Subtotal">' +
+            '<div class="slds-truncate" title="' + price + '">' + price * quantity + '</div>' +
+            '</td>' +
+            '</tr>');
     }
 </script>
 }

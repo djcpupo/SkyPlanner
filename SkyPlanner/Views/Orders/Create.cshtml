@@ -1,80 +1,155 @@
 ﻿@model SkyPlanner.Entities.Order
 
 @{
-    ViewData["Title"] = "Create Order";
+    ViewData["Title"] = "Order";
+    ViewData["PluralTitle"] = "Orders";
+    ViewData["Description"] = "New Order";
     Layout = "~/Views/Shared/_Layout.cshtml";
     int AccountId = ViewBag.AccountId;
 }
 
-<h1>New Order</h1>
+@*@section GlobalActions {
+    <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
+}*@
 
-<hr />
-<div class="row">
-    <div class="col-md-6 table-scrollable">
-        <div class="form-group">
-            <label for="autocomplete-account" class="text-bold">Search</label>
-            <div class="input-group">
-                <input type="text" class="form-control" style="margin-right: 5px" placeholder="Product Name" id="search-product">       
-                <div class="input-group-append">
-                   <button class="btn btn-outline-secondary" type="button" onclick="searchProducts()">Search</button>
+@section SectionIcon {
+    <span class="slds-icon_container slds-icon-standard-orders" title="Order">
+          <svg class="slds-icon slds-icon_small" aria-hidden="true">
+            <use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#orders"></use>
+          </svg>
+          <span class="slds-assistive-text">Orders</span>
+    </span>
+}
+<div class="stage-main slds-grid slds-wrap slds-grow" role="main"> 
+    <div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--6-of-12 slds-col-rule--right slds-p-around--large">
+        <fieldset class="slds-form-element slds-form-element_compound">
+            <div class="slds-form-element__control">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size--1-of-1">
+                      <label class="slds-form-element__label" for="product-autocomplete" id="account-autocomplete-label">Products</label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click">
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right slds-input-has-icon_left-right" role="none">
+                                  <input type="text" class="slds-input slds-combobox__input" id="search-product" aria-autocomplete="list" aria-controls="listbox-account" aria-expanded="false" aria-haspopup="listbox" autoComplete="off" role="combobox" placeholder="Product" />
+                                  <button class="slds-button slds-button_icon slds-input__icon slds-input__icon_right" title="Search" onclick="searchProducts()">
+                                      <svg class="slds-button__icon slds-icon-text-light" aria-hidden="true">
+                                        <use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                      </svg>
+                                      <span class="slds-assistive-text">Search</span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <br />
+                <div class="slds-form-element__row">
+                    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="Product list">
+                      <thead>
+                        <tr class="slds-line-height_reset">
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Name">Name</div>
+                          </th>
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Price">Price</div>
+                          </th>
+                          <th class="slds-cell_action-mode" scope="col" style="width:3.25rem">
+                            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody id="products-table">
+                      </tbody>
+                    </table>
+                </div>
+                <div class="slds-form-element__row">
+                    <div class="slds-scoped-notification slds-media slds-media_center slds-scoped-notification_light slds-size--1-of-1 hidden" role="status" id="product-notification">
+                      <div class="slds-media__figure">
+                        <span class="slds-icon_container slds-icon-utility-info" title="information">
+                          <svg class="slds-icon slds-icon_small slds-icon-text-default" aria-hidden="true">
+                            <use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#info"></use>
+                          </svg>
+                          <span class="slds-assistive-text">information</span>
+                        </span>
+                      </div>
+                      <div class="slds-media__body">
+                        <p>There is no products created.
+                          <a href="/Products/Create">Create one</a>
+                        </p>
+                      </div>
+                    </div>
                 </div>
             </div>
-        </div>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th class="col-lg-6 col-md-6">
-                        Name
-                    </th>
-                    <th class="col-lg-4 col-md-4">
-                        Price
-                    </th>
-                    <th class="col-lg-2 col-md-2"></th>
-                </tr>
-            </thead>
-            <tbody id="products-table"></tbody>
-        </table>
+        </fieldset>
     </div>
-    <div class="col-md-6">
-        <div class="form-group">
-            <label for="autocomplete-account" class="text-bold">Account</label>
-            <input type="text" class="form-control" placeholder="Account" id="autocomplete-account">            
-        </div>
-        <form class="row g-3 needs-validation" novalidate>
-            <div class="col-md-12 scrollable-55" id="order-form">
-                <div class="row text-bold" style="padding: 8px 0 8px 0; border-bottom: 1px solid;">
-                    <div class="col-md-4">Name</div>
-                    <div class="col-md-2">Quantity</div>
-                    <div class="col-md-2">Unit Price</div>
-                    <div class="col-md-2 price-container">Subtotal</div>
-                    <div class="col-md-2"></div>
+    <div class="slds-grow slds-size--1-of-1 slds-medium-size--1-of-2 slds-large-size--6-of-12 slds-col-rule--right slds-p-around--large">
+        <fieldset class="slds-form-element slds-form-element_compound">
+            <div class="slds-form-element__control">
+                <div class="slds-form-element__row">
+                    <div class="slds-form-element slds-size--1-of-1">
+                        <label class="slds-form-element__label" for="account-autocomplete" id="account-autocomplete-label">Account</label>
+                        <div class="slds-form-element__control">
+                            <div class="slds-combobox slds-dropdown-trigger slds-dropdown-trigger_click" id="autocomplete-trigger">
+                                <div class="slds-combobox__form-element slds-input-has-icon slds-input-has-icon_right slds-input-has-icon_left-right" role="none" id="account-autocomplete-combobox">
+                                  <input type="text" class="slds-input slds-combobox__input" id="account-autocomplete" aria-autocomplete="list" aria-controls="listbox-account" aria-expanded="false" aria-haspopup="listbox" autoComplete="off" role="combobox" placeholder="Account" />
+                                  <span class="slds-icon_container slds-icon-utility-search slds-input__icon slds-input__icon_right" id="account-autocomplete-icon">
+                                    <svg class="slds-icon slds-icon slds-icon_x-small slds-icon-text-default" aria-hidden="true">
+                                      <use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#search"></use>
+                                    </svg>
+                                  </span>
+                                </div>
+                                <div id="listbox-account" class="slds-dropdown slds-dropdown_length-with-icon-7 slds-dropdown_fluid" role="listbox">
+                                    <ul class="slds-listbox slds-listbox_vertical" role="presentation" id="autocomplete-options">
+                                    
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-              
-            </div>
-            
-            <div class="row price-container">
-                <div class="col-md-8">Subtotal:</div>
-                <div class="col-md-4" id="subtotal-text">$0</div>
-            </div>
-            <div class="row price-container">
-                <div class="col-md-8">Taxes(7%):</div>
-                <div class="col-md-4" id="taxes-text">$0</div>
-            </div>
-            <div class="row price-container text-bold fs-xlarge">
-                <div class="col-md-8">Total:</div>
-                <div class="col-md-4" id="total-text">$0</div>
-            </div>
-            <div class="row" style="margin-top: 10px">
-                <div class="col-md-12" style="text-align: right">
-                    <button class="btn btn-primary" type="submit">Create</button>
+                <br />
+                <div class="slds-form-element__row">
+                    <table class="slds-table slds-table_cell-buffer slds-no-row-hover slds-table_bordered" aria-label="Order Items list">
+                      <thead>
+                        <tr class="slds-line-height_reset">
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Name">Name</div>
+                          </th>
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Quantity">Quantity</div>
+                          </th>
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Unit Price">Unit Price</div>
+                          </th>
+                          <th class="" scope="col">
+                            <div class="slds-truncate" title="Subtotal">Subtotal</div>
+                          </th>
+                          <th class="slds-cell_action-mode" scope="col" style="width:3.25rem">
+                            <div class="slds-truncate slds-assistive-text" title="Actions">Actions</div>
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody id="order-form">
+                      </tbody>
+                    </table>
                 </div>
             </div>
-        </form>
+        </fieldset>
     </div>
 </div>
-
-<div>
-    @Html.ActionLink("Back to list", "Index")
+<div class="slds-card__header slds-grid">
+        <div class="slds-grow slds-size--3-of-4 slds-col-rule--right slds-p-around--large"></div>
+        <div class="slds-grow slds-size--1-of-4 slds-col-rule--right slds-p-around--large slds-text-align_right">
+            <div class="slds-truncate slds-text-heading_medium" title="Subtotal" id="subtotal-text">Subtotal: $0</div>
+            <br />
+            <div class="slds-truncate slds-text-heading_medium" title="Taxes(7%)" id="taxes-text">Taxes(7%): $0</div>
+            <br />
+            <div class="slds-truncate slds-text-heading_medium" title="Total" id="total-text">Total: $0</div>
+        </div>
+    </div>
+<div class="slds-docked-form-footer">
+  <button type="button" class="slds-button slds-button_neutral" onclick="document.location.href = '/Orders'">Cancel</button>
+  <button type="button" class="slds-button slds-button_brand" onclick="save()">Save</button>
 </div>
 
 @section Scripts {
@@ -85,62 +160,114 @@
     var items = [];
     var accounts = [];
     var selectedAccount = 0;
-    (function() {
-      'use strict';
-      window.addEventListener('load', function() {
-        var forms = document.getElementsByClassName('needs-validation');
-        var validation = Array.prototype.filter.call(forms, function(form) {
-          form.addEventListener('submit', function(event) {
-              if (items.length == 0 || selectedAccount == 0) {
-                  alert(selectedAccount == 0 ? "Please select an Account" : "Please add at least one product to the order");
-                  event.preventDefault();
-                  event.stopPropagation();
-              } else {
-                  if (form.checkValidity() === false) {
-                      event.preventDefault();
-                      event.stopPropagation();
-                  }
-                  else {
-                      event.preventDefault();
-                      var order = {
-                          "orderId": 0,
-                          "accountId": selectedAccount,
-                          "subtotal": subtotal,
-                          "tax": tax,
-                          "total": total,
-                          "orderLineItem": []
-                      };
-                      items.forEach(item => order.orderLineItem.push({
-                          "orderLineItemId": 0,
-                          "orderId": 0,
-                          "productId": item.productId,
-                          "quantity": item.quantity,
-                          "unitPrice": item.price
-                      }));
-                      $.ajax({
-                          type: "POST",
-                          url: "/api/Order",
-                          data: JSON.stringify(order),
-                          contentType: "application/json; charset=utf-8",
-                          success: function(data) {
-                              document.location.pathname = "/Orders";
-                          },
-                          error: function(error) {
-                              alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
-                              event.stopPropagation();
-                          },
-                          dataType: 'json'
-                      });
-                  }
-                  form.classList.add('was-validated');
-              }
-
-          }, false);
-        });
-      }, false);
-    })();
+    $('#account-autocomplete').focus(function(event) {
+        $('#autocomplete-trigger').addClass('slds-is-open');
+    });
+    $('#account-autocomplete').blur(function(event) {
+        $('#autocomplete-trigger').removeClass('slds-is-open');
+    });    
+    $('#account-autocomplete').keypress(function(event) {
+        if (event.keyCode != 13) {
+            var searchTerm = event.target.value + event.key;
+            autocompleteSearch(searchTerm.trim().length > 0 ? searchTerm : '');
+        }
+    });  
+    $('#account-autocomplete').keydown(function(event) {
+      if(event.keyCode == 8) {
+        var searchTerm = event.target.value.substring(0, event.target.value.length - 1);
+        autocompleteSearch(searchTerm.trim().length > 0 ? searchTerm : '');
+      }
+    });
+    const autocomplete = (acc) => {
+        $('#autocomplete-options').empty();
+        for (i = 0; i < acc.length; i++) {
+            $('#autocomplete-options').append(
+                '<li role="presentation" class="slds-listbox__item">' +
+                '<div id="option-' + acc[i].accountId + '" class="slds-media slds-listbox__option slds-listbox__option_entity slds-listbox__option_has-meta" role="option" onmousedown="selected(' + acc[i].accountId + ')">' +
+                '<span class="slds-media__figure slds-listbox__option-icon">' +
+                '<span class="slds-icon_container slds-icon-standard-account">' +
+                '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
+                '<use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#account"></use>' +
+                '</svg>' +
+                '</span>' +
+                '</span>' +
+                '<span class="slds-media__body">' +
+                '<span class="slds-listbox__option-text slds-listbox__option-text_entity">' + acc[i].name + '</span>' +
+                '<span class="slds-listbox__option-meta slds-listbox__option-meta_entity">Account • ' + acc[i].city + ' / ' + acc[i].state + '</span>' +
+                '</span>' +
+                '</div>' +
+                '</li>'
+            );
+        }
+    }
+    const autocompleteSearch = (search) => {
+        var accountList = search != '' ? accounts.filter(a => a.name.toLowerCase().includes(search.toLowerCase())) : accounts;
+        autocomplete(accountList);
+    }
+    const selected = (id) => {
+        $('#account-autocomplete-combobox').removeClass('slds-input-has-icon_right');
+        $('#account-autocomplete-combobox').addClass('slds-input-has-icon_left');
+        $('#autocomplete-trigger').removeClass('slds-is-open');
+        $('#account-autocomplete').remove();
+        $('#account-autocomplete-icon').remove();
+        selectedAccount = id;
+        var acc = accounts.find(a => a.accountId == id);
+        $('#account-autocomplete-combobox').append(
+            '<span class="slds-icon_container slds-icon-standard-account slds-combobox__input-entity-icon" title="Account" id="account-autocomplete-selected-icon">' +
+            '<svg class="slds-icon slds-icon_small" aria-hidden="true">' +
+            '<use xlink:href="/Content/icons/standard-sprite/svg/symbols.svg#account"></use>' +
+            '</svg>' +
+            '<span class="slds-assistive-text">Account</span>' +
+            '</span>' +
+            '<button type="button" class="slds-input_faux slds-combobox__input slds-combobox__input-value" aria-labelledby="combobox-label-id-74 combobox-id-5-selected-value" id="account-autocomplete-selected-value" aria-controls="listbox-id-5" aria-expanded="false" aria-haspopup="listbox">' +
+            '<span class="slds-truncate" id="combobox-value-id-38">' + acc.name + '</span>' 
+        );
+    } 
+    $('#search-product').keypress(function(event) {
+        if (event.keyCode == 13) {
+            searchProducts();
+        }
+    });
+    const save = () => {
+        if (items.length == 0 || selectedAccount == 0) {
+            alert(selectedAccount == 0 ? "Please select an Account" : "Please add at least one product to the order");
+        } else {
+            var order = {
+                "orderId": 0,
+                "accountId": selectedAccount,
+                "subtotal": subtotal,
+                "tax": tax,
+                "total": total,
+                "orderLineItem": []
+            };
+            items.forEach(item => order.orderLineItem.push({
+                "orderLineItemId": 0,
+                "orderId": 0,
+                "productId": item.productId,
+                "quantity": item.quantity,
+                "unitPrice": item.price
+            }));
+            $.ajax({
+                type: "POST",
+                url: "/api/Order",
+                data: JSON.stringify(order),
+                contentType: "application/json; charset=utf-8",
+                success: function(data) {
+                    alert("Order created");
+                    document.location.pathname = "/Orders";
+                },
+                error: function(error) {
+                    alert(error && error.responseJSON ? error.responseJSON : "Error: Try again");
+                    event.stopPropagation();
+                },
+                dataType: 'json'
+            });
+        }
+    }
     $(document).ready(function() {
         $.get("/api/Product/-*-/Search", function(data) {
+            if (data.length == 0)
+                $('#product-notification').removeClass('hidden');
             for (i = 0; i < data.length; i++)
                 appendProduct(data[i]);
         });
@@ -148,38 +275,57 @@
             accounts = data;
             if (@AccountId != 0) {
                 var acc = accounts.find(a => a.accountId == @AccountId);
-                console.log(acc);
                 if (acc) { 
                     selectedAccount = acc.accountId;
-                    $('#autocomplete-account').attr('readonly', 'readonly');
-                    $('#autocomplete-account').val(acc.name);
+                    selected(acc.accountId);
                 }
             }
+            autocomplete(accounts);
         });
     });
     const appendProduct = (data) => {
-        $("#products-table").append('<tr id="product-' + data.productId + '"><td class="col-lg-6 col-md-6">' + data.name +
-            '</td><td class="col-lg-4 col-md-4">' + data.price +
-            '</td><td class="col-lg-2 col-md-2" style="text-align: right"><input type="button" onClick="addProduct(' + data.productId + ',' + "'" + data.name + "'" + ',' + data.price + ')" value="+" class="btn btn-secondary" style="max-width: 38px;"/></td></tr>');
+        $("#products-table").append(
+            '<tr id="product-' + data.productId + '" class="slds-hint-parent">' +
+            '<th data-label="Name" scope="row">' +
+            '<div class="slds-truncate" title="' + data.name + '">' + data.name + '</div>' +  
+            '</th>' +
+            '<td data-label="Price">' +
+            '<div class="slds-truncate" title="' + data.price + '">' + data.price + '</div>' +
+            '</td>' +
+            '<td class="slds-cell_action-mode" role="gridcell">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" tabindex="0" title="Add" onclick="addProduct(' + data.productId + ',' + "'" + data.name + "'" + ',' + data.price + ')">' +
+            '<svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">' +
+            '<use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#add"></use>' +
+            '</svg>' +
+            '<span class="slds-assistive-text">Add to cart</span>' +
+            '</button>' +
+            '</td>' +
+            '</tr>');
     }
     const addProduct = (id, name, price) => {   
         $("#order-form").append(
-               '<div class="row order-item" id="order-item-'+ id +'">' + 
-                    '<input style="display:none" id="product-id-' + id + '" value="' + id + '">' + 
-                    '<input style="display:none" id="product-name-' + id + '" value="' + name + '">' + 
-                    '<input style="display:none" id="product-price-' + id + '" value="' + price + '">' + 
-                    '<div class="col-md-4 flex-column">' + name + '</div>' + 
-                    '<div class="col-md-2">' + 
-                        '<input type="number" class="form-control" id="product-quantity-' + id + '" placeholder="0" required min="1" step="1" onchange="updateItemSubtotal(' + id + ')" value="1">' + 
-                        '<div class="invalid-feedback">' + 
-                          'Enter an amount' + 
-                        '</div>' + 
-                    '</div>' + 
-                    '<div class="col-md-2 flex-column price-container">$' + price + '</div>' + 
-                    '<div class="col-md-2 flex-column price-container" id="product-subtotal-' + id + '">$'+ price +'</div>' + 
-                    '<div class="col-md-2 flex-column price-container" style="align-items: end;" id="product-btn"><input type="button" onClick="deleteProduct(' + id + ')" value="-" class="btn btn-secondary" style="max-width: 38px;"/></div>' +
-                '</div>'
-        );
+            '<tr id="order-item-' + id + '" class="slds-hint-parent">' +
+            '<th data-label="Name" scope="row">' +
+            '<div class="slds-truncate" title="' + name + '">' + name + '</div>' +  
+            '</th>' +
+            '<td data-label="Quantity">' +
+            '<div class="slds-truncate"><input type="number" class="form-control" id="product-quantity-' + id + '" placeholder="0" required min="1" step="1" onchange="updateItemSubtotal(' + id + ')" value="1"></div>' +
+            '</td>' +
+            '<td data-label="Unit Price">' +
+            '<div class="slds-truncate">$' + price + '</div>' +
+            '</td>' +
+            '<td data-label="Subtotal">' +
+            '<div class="slds-truncate" id="product-subtotal-' + id + '">$' + price + '</div>' +
+            '</td>' +
+            '<td class="slds-cell_action-mode" role="gridcell">' +
+            '<button class="slds-button slds-button_icon slds-button_icon-border-filled slds-button_icon-x-small" aria-haspopup="true" tabindex="0" title="Add" onclick="deleteProduct(' + id + ')">' +
+            '<svg class="slds-button__icon slds-button__icon_hint slds-button__icon_small" aria-hidden="true">' +
+            '<use xlink:href="/Content/icons/utility-sprite/svg/symbols.svg#delete"></use>' +
+            '</svg>' +
+            '<span class="slds-assistive-text">Add to cart</span>' +
+            '</button>' +
+            '</td>' +
+            '</tr>');
         items.push({
             productId: id,
             name,
@@ -193,14 +339,14 @@
     const calculateValues = () => {
         subtotal = 0;
         items.forEach(i => subtotal = subtotal + i.price * i.quantity);
+        subtotal = Number.parseFloat((subtotal).toFixed(2));
         tax = Number.parseFloat((subtotal * 0.07).toFixed(2));
-        total = subtotal + tax;
-        $("#subtotal-text").text(subtotal.toString());
-        $("#taxes-text").text(tax.toString());
-        $("#total-text").text(total.toString());
+        total = Number.parseFloat(subtotal + tax).toFixed(2);
+        $("#subtotal-text").text('Subtotal: $' + subtotal.toString());
+        $("#taxes-text").text('Taxes(7%): $' + tax.toString());
+        $("#total-text").text('Total: $' + total.toString());
     }
     const deleteProduct = (id) => { 
-        console.log(id);
         var quantity = $("#product-quantity-" + id).val()
         var product = items.find(i => i.productId == id);
         if (product) { 
@@ -212,35 +358,19 @@
             
     }
     const updateItemSubtotal = (id) => {
-        console.log(id);
         var quantity = Number.parseInt($("#product-quantity-" + id).val());
+        if (Number.isNaN(quantity)) {
+            quantity = 1;
+            $("#product-quantity-" + id).val(quantity);
+        }
         var product = items.find(i => i.productId == id);
-        product.quantity = quantity;
-        $("#product-subtotal-" + id).text('$' + quantity*product.price);
+        product.quantity = quantity <= 0 ? 1 : quantity;
+        if(quantity <= 0)
+            $("#product-quantity-" + id).val(product.quantity)
+        $("#product-subtotal-" + id).text('$' + Number.parseFloat(product.quantity * product.price).toFixed(2));
         calculateValues();    
     }
-    document.addEventListener('DOMContentLoaded', e => {
-        $('#autocomplete-account').autocomplete({
-          source: function( request, response ) {
-            $.ajax({
-              url: "/api/Account/" + request.term + "/Autocomplete",
-              dataType: "json",
-              contentType: "application/json; charset=utf-8",
-              success: function( data ) {
-                response( data );
-              }
-            });
-          },
-          minLength: 1,
-          select: function( event, ui ) {
-              var acc = accounts.find(a => a.name == ui.item.value);
-              if (acc) { 
-                  selectedAccount = acc.accountId;
-                  $('#autocomplete-account').attr('readonly', 'readonly');
-              }
-          }
-        })
-    }, false);
+    
     const searchProducts = () => {
         var term = $("#search-product").val();
         $.get("/api/Product/" + (term === '' || term === null ? '-*-' : term) + "/Search", function(data) {

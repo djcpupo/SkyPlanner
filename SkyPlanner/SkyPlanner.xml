@@ -196,6 +196,22 @@
             </remarks>
             <returns>The new Product.</returns>
         </member>
+        <member name="M:SkyPlanner.Controllers.ProductController.Put(SkyPlanner.Entities.Product,System.Int32)">
+            <summary>
+            Edit a Product.
+            </summary>
+            <remarks>
+            Sample request:
+            
+                PUT api/Product
+                {        
+                  "name": "Name",
+                  "Phone": "7863052365",
+                  "Price": 100
+                }
+            </remarks>
+            <returns>The Product.</returns>
+        </member>
         <member name="M:SkyPlanner.Controllers.ProductController.Delete(System.Int32)">
             <summary>
             Delete the Product by Id.

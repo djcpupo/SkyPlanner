@@ -10,42 +10,6 @@
     -moz-appearance: textfield;
 }
 
-.table-scrollable {
-    height: 70vh;
-    overflow-y: auto;
-}
-
-.scrollable-55 {
-    height: 55vh;
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-.price-container {
-    text-align: right;
-}
-
-.text-bold {
-    font-weight: 600;
-}
-
-.fs-xlarge {
-    font-size: x-large;
-}
-
-.flex-column {
-    display: flex;
-    align-self: center;
-}
-
-.mb-5px{
-    margin-bottom: 5px;
-}
-
-.order-item {
-    border-bottom: 1px solid;
-    padding: 4px 0 4px 0;
-}
-.btn-light {
-    border-color: #6c757d;
+.hidden {
+    display: none;
 }
